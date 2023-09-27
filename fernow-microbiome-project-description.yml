@@ -1,0 +1,36 @@
+name: fernow-microbiome
+questions:
+  - what is the impact of long-term ammonium sulfate amendments to forest microbiomes of soils dominated by AM or ECM fungi?
+design:
+  - locations:
+    - lat, lon: 
+      - 39.05417, -79.82083
+    - watershed 3 (ws3)
+    - watershed 7 (ws7)
+  - treatments:
+    - fertilized:
+      - type:
+        - (NH4)2SO4
+      - rate:
+        - 35 kg/ha
+      - frequency:
+        - annually:
+          - March
+          - July
+          - November
+  - plots:
+    - size: 
+      - 10 m x 10 m
+    - types:
+      - arbuscular mycorrhizal dominated (AM) sites:
+        - 6 plots/watershed
+      - ectomycorrhizal dominated (ECM) sites:
+        - 6 plots/watershed 
+  - sampling:
+    - soil cores:
+      - 3 per plot
+      - 20 cm deep 
+    - soil types:
+      - rhizosphere
+      - O horizon
+      - bulk    
