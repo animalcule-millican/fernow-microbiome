@@ -24,6 +24,8 @@ ps = phyloseq::phyloseq(otu_table(seqtab.nochim, taxa_are_rows = FALSE),
                         tax_table(tax.table), 
                         phy_tree(tree))
 ps = prune_samples(sample_sums(ps) > 4000, ps)
-df.meta = df.meta %>% filter(sample_id %in% sample_names(ps))
+df.meta = df.meta %>% filter(sample_id %in% phyloseq::sample_names(ps)) %>%
+                mutate(site = case_when(site == "3_ammonium_sulfate" ~ "ws3", site == '7_ecosystem_recovery' ~ "ws7"))
+sample_data(ps) <- df.meta
 # Save data objects
 save(df.meta, ps, file = "data/fernow-analysis-data.RData")

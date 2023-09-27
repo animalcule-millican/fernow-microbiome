@@ -1,0 +1,1154 @@
+
+R version 4.2.2 (2022-10-31) -- "Innocent and Trusting"
+Copyright (C) 2022 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> library("tidyverse")
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+> library("speedyseq")
+Loading required package: phyloseq
+
+Attaching package: ‘speedyseq’
+
+The following objects are masked from ‘package:phyloseq’:
+
+    filter_taxa, plot_bar, plot_heatmap, plot_tree, psmelt, tax_glom,
+    tip_glom, transform_sample_counts
+
+> load("data/fernow-analysis-data.RData")
+> 
+> ###########################################
+> ######### Bacterial Phyla #################
+> ###########################################
+> ps %>% 
++     speedyseq::filter_tax_table(!is.na(phylum)) %>%
++     speedyseq::tax_glom(taxrank = "phylum") %>%
++     speedyseq::transform_sample_counts(function(x) x / sum(x)) %>%
++     speedyseq::psmelt() %>%
++     group_by(site, sym, soil, date, phylum, Sample)%>%
++     dplyr::summarize(abun=sum(Abundance))%>%
++     group_by(site, sym, soil, date, phylum)%>%
++     dplyr::summarize(mean.abun = mean(abun)) %>%
++     data.frame %>% arrange(-mean.abun)
+`summarise()` has grouped output by 'site', 'sym', 'soil', 'date', 'phylum'.
+You can override using the `.groups` argument.
+`summarise()` has grouped output by 'site', 'sym', 'soil', 'date'. You can
+override using the `.groups` argument.
+    site sym        soil date                      phylum    mean.abun
+1    ws3  AM        Bulk 2022              Proteobacteria 3.779065e-01
+2    ws3  AM Rhizosphere 2022              Proteobacteria 3.737826e-01
+3    ws3 ECM        Bulk 2022              Proteobacteria 3.674938e-01
+4    ws7 ECM        Bulk 2017              Proteobacteria 3.652722e-01
+5    ws7 ECM Rhizosphere 2022              Proteobacteria 3.642725e-01
+6    ws7 ECM        Bulk 2022              Proteobacteria 3.630816e-01
+7    ws7  AM        Bulk 2022              Proteobacteria 3.629596e-01
+8    ws3  AM        Bulk 2017              Proteobacteria 3.563225e-01
+9    ws7  AM Rhizosphere 2017              Proteobacteria 3.534682e-01
+10   ws3  AM Rhizosphere 2017              Proteobacteria 3.533151e-01
+11   ws7  AM Rhizosphere 2022              Proteobacteria 3.520053e-01
+12   ws7  AM        Bulk 2017              Proteobacteria 3.452073e-01
+13   ws7 ECM Rhizosphere 2017              Proteobacteria 3.450626e-01
+14   ws3 ECM Rhizosphere 2017              Proteobacteria 3.398806e-01
+15   ws3 ECM Rhizosphere 2022              Proteobacteria 3.389070e-01
+16   ws3 ECM        Bulk 2017              Proteobacteria 3.373890e-01
+17   ws3 ECM Rhizosphere 2022               Acidobacteria 3.044273e-01
+18   ws3 ECM Rhizosphere 2017               Acidobacteria 3.000901e-01
+19   ws3 ECM        Bulk 2017               Acidobacteria 2.911756e-01
+20   ws7  AM        Bulk 2017               Acidobacteria 2.895932e-01
+21   ws7  AM Rhizosphere 2022               Acidobacteria 2.869277e-01
+22   ws7  AM Rhizosphere 2017               Acidobacteria 2.825220e-01
+23   ws3  AM Rhizosphere 2022               Acidobacteria 2.806601e-01
+24   ws7 ECM Rhizosphere 2022               Acidobacteria 2.753762e-01
+25   ws7 ECM Rhizosphere 2017               Acidobacteria 2.743869e-01
+26   ws7  AM        Bulk 2022               Acidobacteria 2.709405e-01
+27   ws7 ECM        Bulk 2022               Acidobacteria 2.655870e-01
+28   ws3 ECM        Bulk 2022               Acidobacteria 2.640292e-01
+29   ws3  AM Rhizosphere 2017               Acidobacteria 2.579493e-01
+30   ws3  AM        Bulk 2022               Acidobacteria 2.517469e-01
+31   ws3  AM        Bulk 2017               Acidobacteria 2.438619e-01
+32   ws7 ECM        Bulk 2017               Acidobacteria 2.405364e-01
+33   ws3  AM        Bulk 2017              Actinobacteria 1.261448e-01
+34   ws3 ECM        Bulk 2022              Actinobacteria 1.176776e-01
+35   ws3  AM        Bulk 2022              Actinobacteria 1.173805e-01
+36   ws3 ECM        Bulk 2017              Actinobacteria 1.092570e-01
+37   ws3 ECM Rhizosphere 2022              Actinobacteria 1.084678e-01
+38   ws3  AM Rhizosphere 2022              Actinobacteria 1.084405e-01
+39   ws3  AM Rhizosphere 2017              Actinobacteria 1.041858e-01
+40   ws7  AM Rhizosphere 2022              Planctomycetes 1.027375e-01
+41   ws3 ECM Rhizosphere 2017              Actinobacteria 1.007860e-01
+42   ws7 ECM        Bulk 2022              Actinobacteria 9.614911e-02
+43   ws7 ECM Rhizosphere 2022              Planctomycetes 9.545024e-02
+44   ws7 ECM        Bulk 2017              Actinobacteria 9.539185e-02
+45   ws7 ECM Rhizosphere 2017              Actinobacteria 8.971169e-02
+46   ws7  AM Rhizosphere 2017              Planctomycetes 8.970882e-02
+47   ws7  AM        Bulk 2022              Planctomycetes 8.870301e-02
+48   ws7 ECM        Bulk 2022              Planctomycetes 8.712972e-02
+49   ws7  AM        Bulk 2022              Actinobacteria 8.596134e-02
+50   ws7 ECM Rhizosphere 2022              Actinobacteria 8.476171e-02
+51   ws3 ECM Rhizosphere 2022              Planctomycetes 8.216284e-02
+52   ws7 ECM        Bulk 2017              Planctomycetes 7.925726e-02
+53   ws7  AM        Bulk 2017              Actinobacteria 7.884408e-02
+54   ws7  AM        Bulk 2017             Verrucomicrobia 7.822481e-02
+55   ws7  AM Rhizosphere 2017             Verrucomicrobia 7.771685e-02
+56   ws7 ECM Rhizosphere 2017              Planctomycetes 7.707636e-02
+57   ws7  AM        Bulk 2017              Planctomycetes 7.633668e-02
+58   ws3 ECM        Bulk 2022              Planctomycetes 7.339063e-02
+59   ws3  AM Rhizosphere 2022              Planctomycetes 7.186413e-02
+60   ws7  AM Rhizosphere 2022             Verrucomicrobia 7.056439e-02
+61   ws7 ECM Rhizosphere 2017             Verrucomicrobia 7.047578e-02
+62   ws7 ECM        Bulk 2017             Verrucomicrobia 6.831463e-02
+63   ws7  AM Rhizosphere 2022              Actinobacteria 6.707374e-02
+64   ws3  AM        Bulk 2022              Planctomycetes 6.584140e-02
+65   ws7  AM Rhizosphere 2017              Actinobacteria 6.497596e-02
+66   ws3 ECM Rhizosphere 2017              Planctomycetes 6.455385e-02
+67   ws7  AM        Bulk 2022                  Firmicutes 6.240184e-02
+68   ws7 ECM        Bulk 2022             Verrucomicrobia 6.025522e-02
+69   ws3  AM Rhizosphere 2017             Verrucomicrobia 6.012082e-02
+70   ws3 ECM        Bulk 2017              Planctomycetes 5.999167e-02
+71   ws3 ECM        Bulk 2017             Verrucomicrobia 5.952128e-02
+72   ws7 ECM        Bulk 2017                  Firmicutes 5.914838e-02
+73   ws3  AM Rhizosphere 2017                  Firmicutes 5.777818e-02
+74   ws7 ECM Rhizosphere 2022             Verrucomicrobia 5.673830e-02
+75   ws3  AM        Bulk 2017             Verrucomicrobia 5.632672e-02
+76   ws3 ECM Rhizosphere 2017             Verrucomicrobia 5.442239e-02
+77   ws3  AM        Bulk 2017                 Chloroflexi 5.330888e-02
+78   ws7  AM Rhizosphere 2017                  Firmicutes 5.257653e-02
+79   ws3  AM        Bulk 2022                  Firmicutes 5.233334e-02
+80   ws3  AM        Bulk 2017                  Firmicutes 5.214761e-02
+81   ws3  AM        Bulk 2017              Planctomycetes 5.211203e-02
+82   ws3  AM Rhizosphere 2017              Planctomycetes 5.026511e-02
+83   ws3  AM Rhizosphere 2017                 Chloroflexi 4.989644e-02
+84   ws3 ECM        Bulk 2022             Verrucomicrobia 4.865432e-02
+85   ws7 ECM Rhizosphere 2017                  Firmicutes 4.862997e-02
+86   ws7  AM        Bulk 2022             Verrucomicrobia 4.722273e-02
+87   ws7 ECM        Bulk 2022                  Firmicutes 4.635689e-02
+88   ws7  AM        Bulk 2017                  Firmicutes 4.548832e-02
+89   ws3 ECM        Bulk 2017                  Firmicutes 4.513709e-02
+90   ws3 ECM        Bulk 2022                  Firmicutes 4.413018e-02
+91   ws7 ECM Rhizosphere 2022                  Firmicutes 4.295303e-02
+92   ws3 ECM Rhizosphere 2022             Verrucomicrobia 4.290145e-02
+93   ws3 ECM Rhizosphere 2017                  Firmicutes 4.214864e-02
+94   ws7 ECM        Bulk 2017                 Chloroflexi 4.159332e-02
+95   ws3  AM        Bulk 2022             Verrucomicrobia 4.030635e-02
+96   ws7  AM Rhizosphere 2017                 Chloroflexi 3.986460e-02
+97   ws7 ECM        Bulk 2022                 Chloroflexi 3.822037e-02
+98   ws3 ECM Rhizosphere 2022                  Firmicutes 3.737653e-02
+99   ws3  AM Rhizosphere 2022             Verrucomicrobia 3.709092e-02
+100  ws7 ECM Rhizosphere 2017                 Chloroflexi 3.659170e-02
+101  ws7  AM Rhizosphere 2022                  Firmicutes 3.654449e-02
+102  ws7  AM        Bulk 2022                 Chloroflexi 3.557307e-02
+103  ws7  AM Rhizosphere 2022                 Chloroflexi 3.478861e-02
+104  ws3 ECM Rhizosphere 2017                 Chloroflexi 3.451157e-02
+105  ws3  AM Rhizosphere 2022                  Firmicutes 3.378182e-02
+106  ws3 ECM        Bulk 2017                 Chloroflexi 3.376018e-02
+107  ws7  AM        Bulk 2017                 Chloroflexi 3.344193e-02
+108  ws3  AM        Bulk 2022                 Chloroflexi 3.250023e-02
+109  ws3 ECM        Bulk 2022                 Chloroflexi 2.867155e-02
+110  ws7 ECM Rhizosphere 2022                 Chloroflexi 2.579073e-02
+111  ws3  AM Rhizosphere 2022    candidate division WPS-2 2.339963e-02
+112  ws3 ECM Rhizosphere 2022    candidate division WPS-2 2.144847e-02
+113  ws3 ECM Rhizosphere 2022                 Chloroflexi 2.043251e-02
+114  ws3  AM        Bulk 2022    candidate division WPS-2 1.931834e-02
+115  ws3 ECM Rhizosphere 2017                  Chlamydiae 1.877853e-02
+116  ws3  AM Rhizosphere 2022                 Chloroflexi 1.864903e-02
+117  ws3 ECM        Bulk 2017                  Chlamydiae 1.862316e-02
+118  ws3 ECM        Bulk 2022    candidate division WPS-2 1.703013e-02
+119  ws3  AM Rhizosphere 2017              Thaumarchaeota 1.665471e-02
+120  ws7 ECM Rhizosphere 2022               Bacteroidetes 1.576397e-02
+121  ws3  AM        Bulk 2017    candidate division WPS-2 1.526747e-02
+122  ws7 ECM Rhizosphere 2017               Bacteroidetes 1.403885e-02
+123  ws3  AM Rhizosphere 2022                  Chlamydiae 1.372995e-02
+124  ws3  AM Rhizosphere 2017    candidate division WPS-2 1.357655e-02
+125  ws3  AM        Bulk 2017              Thaumarchaeota 1.330251e-02
+126  ws3 ECM        Bulk 2017    candidate division WPS-2 1.315072e-02
+127  ws3 ECM Rhizosphere 2017    candidate division WPS-2 1.268848e-02
+128  ws7  AM Rhizosphere 2022               Bacteroidetes 1.261614e-02
+129  ws3  AM        Bulk 2022                  Chlamydiae 1.230137e-02
+130  ws3 ECM Rhizosphere 2017              Thaumarchaeota 1.185132e-02
+131  ws7  AM Rhizosphere 2022    candidate division WPS-2 1.088070e-02
+132  ws7  AM        Bulk 2017               Bacteroidetes 1.082634e-02
+133  ws7 ECM Rhizosphere 2017    candidate division WPS-2 1.082324e-02
+134  ws3 ECM        Bulk 2022                  Chlamydiae 1.075355e-02
+135  ws3 ECM        Bulk 2017              Thaumarchaeota 1.049892e-02
+136  ws3  AM Rhizosphere 2022               Bacteroidetes 1.021276e-02
+137  ws3 ECM Rhizosphere 2022                  Chlamydiae 1.004520e-02
+138  ws7  AM        Bulk 2022               Bacteroidetes 9.980249e-03
+139  ws7 ECM        Bulk 2017    candidate division WPS-2 9.867864e-03
+140  ws7  AM        Bulk 2017    candidate division WPS-2 9.848504e-03
+141  ws7 ECM        Bulk 2017               Bacteroidetes 9.770174e-03
+142  ws3  AM Rhizosphere 2017                  Chlamydiae 9.656900e-03
+143  ws7 ECM Rhizosphere 2022    candidate division WPS-2 9.146128e-03
+144  ws7 ECM Rhizosphere 2022                  Chlamydiae 9.021225e-03
+145  ws3 ECM Rhizosphere 2022               Bacteroidetes 8.819627e-03
+146  ws7  AM Rhizosphere 2017                  Chlamydiae 8.613838e-03
+147  ws7 ECM Rhizosphere 2017              Thaumarchaeota 8.570583e-03
+148  ws7  AM        Bulk 2022    candidate division WPS-2 8.504540e-03
+149  ws7  AM        Bulk 2017                  Chlamydiae 8.458264e-03
+150  ws3  AM Rhizosphere 2017               Bacteroidetes 8.451686e-03
+151  ws7 ECM        Bulk 2017              Thaumarchaeota 8.401034e-03
+152  ws3  AM        Bulk 2017                  Chlamydiae 8.179030e-03
+153  ws7 ECM        Bulk 2022               Bacteroidetes 8.146190e-03
+154  ws3  AM Rhizosphere 2022    candidate division WPS-1 8.062153e-03
+155  ws7 ECM        Bulk 2022    candidate division WPS-2 7.921408e-03
+156  ws7  AM        Bulk 2022                  Chlamydiae 7.813171e-03
+157  ws7  AM        Bulk 2017              Thaumarchaeota 7.680551e-03
+158  ws7 ECM        Bulk 2017            Gemmatimonadetes 7.520913e-03
+159  ws3 ECM        Bulk 2022               Bacteroidetes 7.513128e-03
+160  ws7 ECM        Bulk 2022                  Chlamydiae 7.447215e-03
+161  ws3  AM        Bulk 2017               Bacteroidetes 7.274237e-03
+162  ws7 ECM Rhizosphere 2017            Gemmatimonadetes 7.194238e-03
+163  ws7 ECM Rhizosphere 2017                  Chlamydiae 6.800641e-03
+164  ws7 ECM        Bulk 2022            Gemmatimonadetes 6.730629e-03
+165  ws3  AM Rhizosphere 2022              Thaumarchaeota 6.691832e-03
+166  ws7  AM        Bulk 2022            Gemmatimonadetes 6.634975e-03
+167  ws3  AM        Bulk 2022               Bacteroidetes 6.624625e-03
+168  ws7  AM Rhizosphere 2017              Thaumarchaeota 6.597921e-03
+169  ws3  AM        Bulk 2022              Thaumarchaeota 6.386249e-03
+170  ws7 ECM Rhizosphere 2022            Gemmatimonadetes 6.372203e-03
+171  ws7  AM Rhizosphere 2017               Bacteroidetes 6.139727e-03
+172  ws3 ECM Rhizosphere 2022              Thaumarchaeota 5.766357e-03
+173  ws3  AM Rhizosphere 2017            Gemmatimonadetes 5.725707e-03
+174  ws3 ECM        Bulk 2022              Thaumarchaeota 5.723437e-03
+175  ws7  AM Rhizosphere 2022                  Chlamydiae 5.581005e-03
+176  ws3 ECM Rhizosphere 2017               Bacteroidetes 5.570896e-03
+177  ws7 ECM        Bulk 2017                  Chlamydiae 5.545135e-03
+178  ws3  AM        Bulk 2022            Gemmatimonadetes 5.524998e-03
+179  ws7  AM        Bulk 2017            Gemmatimonadetes 5.418120e-03
+180  ws7 ECM Rhizosphere 2022              Thaumarchaeota 5.377683e-03
+181  ws7  AM Rhizosphere 2017    candidate division WPS-2 5.291501e-03
+182  ws3  AM        Bulk 2017            Gemmatimonadetes 5.243249e-03
+183  ws3 ECM Rhizosphere 2022    candidate division WPS-1 5.092885e-03
+184  ws7  AM Rhizosphere 2022            Gemmatimonadetes 5.055932e-03
+185  ws3 ECM        Bulk 2022            Gemmatimonadetes 5.044776e-03
+186  ws7  AM        Bulk 2022              Thaumarchaeota 5.005064e-03
+187  ws3 ECM        Bulk 2017               Bacteroidetes 4.896132e-03
+188  ws7  AM Rhizosphere 2022    candidate division WPS-1 4.799956e-03
+189  ws7  AM Rhizosphere 2017            Gemmatimonadetes 4.696309e-03
+190  ws3 ECM        Bulk 2017            Gemmatimonadetes 4.645518e-03
+191  ws7 ECM        Bulk 2022              Thaumarchaeota 4.593517e-03
+192  ws3  AM Rhizosphere 2022            Gemmatimonadetes 4.405034e-03
+193  ws3  AM        Bulk 2022    candidate division WPS-1 4.310450e-03
+194  ws3 ECM Rhizosphere 2017            Gemmatimonadetes 3.915685e-03
+195  ws7  AM Rhizosphere 2022              Thaumarchaeota 3.762621e-03
+196  ws3 ECM        Bulk 2017    candidate division WPS-1 3.340136e-03
+197  ws3  AM Rhizosphere 2017    candidate division WPS-1 3.234891e-03
+198  ws3 ECM        Bulk 2022    candidate division WPS-1 3.047935e-03
+199  ws3 ECM Rhizosphere 2022            Gemmatimonadetes 2.819331e-03
+200  ws3 ECM Rhizosphere 2017    candidate division WPS-1 2.800205e-03
+201  ws3 ECM Rhizosphere 2022             Armatimonadetes 2.534911e-03
+202  ws7  AM        Bulk 2017    candidate division WPS-1 2.488355e-03
+203  ws7 ECM Rhizosphere 2017    candidate division WPS-1 2.425370e-03
+204  ws3 ECM Rhizosphere 2022             Deferribacteres 2.131169e-03
+205  ws3  AM        Bulk 2017    candidate division WPS-1 2.117421e-03
+206  ws3  AM        Bulk 2017             Armatimonadetes 1.984739e-03
+207  ws3  AM Rhizosphere 2022             Deferribacteres 1.949584e-03
+208  ws3  AM Rhizosphere 2017             Armatimonadetes 1.884667e-03
+209  ws3 ECM Rhizosphere 2017             Armatimonadetes 1.838690e-03
+210  ws7  AM        Bulk 2022    candidate division WPS-1 1.830162e-03
+211  ws7 ECM        Bulk 2017    candidate division WPS-1 1.828024e-03
+212  ws7 ECM Rhizosphere 2022    candidate division WPS-1 1.787169e-03
+213  ws3  AM Rhizosphere 2022             Armatimonadetes 1.668248e-03
+214  ws7 ECM        Bulk 2017                 Nitrospirae 1.568217e-03
+215  ws7 ECM Rhizosphere 2017             Armatimonadetes 1.545679e-03
+216  ws3 ECM        Bulk 2022             Armatimonadetes 1.520044e-03
+217  ws3 ECM        Bulk 2017             Armatimonadetes 1.503671e-03
+218  ws7  AM        Bulk 2017                 Nitrospirae 1.488306e-03
+219  ws7 ECM        Bulk 2022             Armatimonadetes 1.446690e-03
+220  ws7  AM Rhizosphere 2022             Armatimonadetes 1.412602e-03
+221  ws7  AM        Bulk 2017             Armatimonadetes 1.396185e-03
+222  ws3  AM Rhizosphere 2017             Rhodothermaeota 1.354067e-03
+223  ws7 ECM        Bulk 2022    candidate division WPS-1 1.350581e-03
+224  ws3 ECM        Bulk 2017             Deferribacteres 1.345304e-03
+225  ws3  AM        Bulk 2022             Armatimonadetes 1.324358e-03
+226  ws7 ECM        Bulk 2022                 Nitrospirae 1.277147e-03
+227  ws7  AM Rhizosphere 2017    candidate division WPS-1 1.271540e-03
+228  ws7  AM Rhizosphere 2017             Armatimonadetes 1.110463e-03
+229  ws7 ECM Rhizosphere 2017                 Nitrospirae 1.073936e-03
+230  ws3  AM        Bulk 2017              Woesearchaeota 1.073877e-03
+231  ws7 ECM Rhizosphere 2022             Armatimonadetes 1.070039e-03
+232  ws7 ECM        Bulk 2017             Armatimonadetes 1.065718e-03
+233  ws7  AM Rhizosphere 2017              Woesearchaeota 1.048541e-03
+234  ws3  AM        Bulk 2022              Woesearchaeota 1.041320e-03
+235  ws7  AM        Bulk 2022             Armatimonadetes 1.024587e-03
+236  ws3 ECM Rhizosphere 2022              Woesearchaeota 1.000620e-03
+237  ws7 ECM Rhizosphere 2022             Rhodothermaeota 9.799067e-04
+238  ws3  AM Rhizosphere 2017              Woesearchaeota 9.242589e-04
+239  ws3  AM        Bulk 2017                 Nitrospirae 9.225008e-04
+240  ws7 ECM Rhizosphere 2022                 Nitrospirae 8.861695e-04
+241  ws7  AM        Bulk 2017               Elusimicrobia 8.798231e-04
+242  ws3  AM        Bulk 2017             Rhodothermaeota 8.624024e-04
+243  ws3  AM Rhizosphere 2022               Euryarchaeota 8.487547e-04
+244  ws7  AM        Bulk 2022             Rhodothermaeota 8.382061e-04
+245  ws3 ECM Rhizosphere 2022               Euryarchaeota 8.366183e-04
+246  ws7 ECM Rhizosphere 2022               Elusimicrobia 8.062532e-04
+247  ws3  AM        Bulk 2022             Rhodothermaeota 7.883857e-04
+248  ws7  AM Rhizosphere 2017             Rhodothermaeota 7.877893e-04
+249  ws3  AM Rhizosphere 2022   Cyanobacteria/Chloroplast 7.783542e-04
+250  ws3 ECM        Bulk 2022              Woesearchaeota 7.643060e-04
+251  ws7  AM Rhizosphere 2022             Rhodothermaeota 7.457699e-04
+252  ws3  AM Rhizosphere 2022             Rhodothermaeota 7.350012e-04
+253  ws7 ECM        Bulk 2022             Rhodothermaeota 7.197659e-04
+254  ws3  AM Rhizosphere 2017                 Nitrospirae 7.158974e-04
+255  ws7  AM        Bulk 2017              Woesearchaeota 7.137930e-04
+256  ws3 ECM        Bulk 2022             Deferribacteres 7.133013e-04
+257  ws3 ECM Rhizosphere 2017             Deferribacteres 7.081176e-04
+258  ws3 ECM        Bulk 2017             Rhodothermaeota 7.080693e-04
+259  ws7  AM Rhizosphere 2017               Elusimicrobia 6.989769e-04
+260  ws7  AM        Bulk 2022                     Plantae 6.977495e-04
+261  ws7 ECM Rhizosphere 2022                Spirochaetes 6.927749e-04
+262  ws7 ECM        Bulk 2017                     Plantae 6.751535e-04
+263  ws7 ECM Rhizosphere 2017               Elusimicrobia 6.726367e-04
+264  ws7  AM        Bulk 2017         Deinococcus-Thermus 6.726054e-04
+265  ws7  AM        Bulk 2017                Spirochaetes 6.544124e-04
+266  ws7 ECM Rhizosphere 2017             Rhodothermaeota 6.525801e-04
+267  ws7 ECM        Bulk 2017               Elusimicrobia 6.523692e-04
+268  ws3 ECM Rhizosphere 2017             Rhodothermaeota 6.444826e-04
+269  ws3 ECM        Bulk 2017              Woesearchaeota 6.328382e-04
+270  ws3 ECM Rhizosphere 2017              Woesearchaeota 6.320594e-04
+271  ws3  AM Rhizosphere 2017              Marinimicrobia 6.259461e-04
+272  ws3 ECM Rhizosphere 2022             Rhodothermaeota 6.083209e-04
+273  ws3 ECM Rhizosphere 2022              Marinimicrobia 5.973754e-04
+274  ws7 ECM Rhizosphere 2017                     Plantae 5.930137e-04
+275  ws3 ECM Rhizosphere 2022               Parcubacteria 5.844984e-04
+276  ws7  AM        Bulk 2022               Elusimicrobia 5.827557e-04
+277  ws7 ECM        Bulk 2022                     Plantae 5.812154e-04
+278  ws7  AM        Bulk 2022                 Nitrospirae 5.806807e-04
+279  ws3  AM        Bulk 2022             Deferribacteres 5.752152e-04
+280  ws7 ECM Rhizosphere 2022   Cyanobacteria/Chloroplast 5.744978e-04
+281  ws3 ECM Rhizosphere 2022               Elusimicrobia 5.624541e-04
+282  ws7 ECM Rhizosphere 2017         Deinococcus-Thermus 5.610269e-04
+283  ws7  AM Rhizosphere 2022                     Plantae 5.598047e-04
+284  ws7  AM Rhizosphere 2022               Elusimicrobia 5.475399e-04
+285  ws3 ECM Rhizosphere 2022                Spirochaetes 5.369519e-04
+286  ws3  AM        Bulk 2022                 Nitrospirae 5.354440e-04
+287  ws3 ECM Rhizosphere 2017               Elusimicrobia 5.349216e-04
+288  ws3  AM        Bulk 2022              Marinimicrobia 5.347122e-04
+289  ws7  AM Rhizosphere 2022   Cyanobacteria/Chloroplast 5.310388e-04
+290  ws3  AM        Bulk 2017               Euryarchaeota 5.309122e-04
+291  ws7 ECM        Bulk 2022               Elusimicrobia 5.256731e-04
+292  ws7 ECM        Bulk 2017                Spirochaetes 5.234018e-04
+293  ws3 ECM        Bulk 2017               Elusimicrobia 5.192190e-04
+294  ws3 ECM        Bulk 2022              Marinimicrobia 5.154840e-04
+295  ws7 ECM        Bulk 2017             Rhodothermaeota 5.112385e-04
+296  ws3  AM Rhizosphere 2017         Deinococcus-Thermus 5.058520e-04
+297  ws7  AM        Bulk 2017             Rhodothermaeota 4.980028e-04
+298  ws7 ECM Rhizosphere 2017                Spirochaetes 4.925121e-04
+299  ws7  AM Rhizosphere 2022                Spirochaetes 4.838276e-04
+300  ws3 ECM        Bulk 2017                Spirochaetes 4.771949e-04
+301  ws3  AM Rhizosphere 2017                Spirochaetes 4.766968e-04
+302  ws7 ECM Rhizosphere 2022                     Plantae 4.732601e-04
+303  ws3  AM Rhizosphere 2017               Synergistetes 4.700522e-04
+304  ws3  AM Rhizosphere 2022              Marinimicrobia 4.600578e-04
+305  ws3 ECM Rhizosphere 2017               Euryarchaeota 4.594527e-04
+306  ws7  AM Rhizosphere 2017         Deinococcus-Thermus 4.500533e-04
+307  ws3  AM        Bulk 2022               Euryarchaeota 4.432891e-04
+308  ws3  AM Rhizosphere 2022                Spirochaetes 4.316933e-04
+309  ws7  AM Rhizosphere 2022              Woesearchaeota 4.289726e-04
+310  ws7 ECM        Bulk 2022              Woesearchaeota 4.278616e-04
+311  ws7 ECM        Bulk 2022   Cyanobacteria/Chloroplast 4.254526e-04
+312  ws7 ECM Rhizosphere 2017              Woesearchaeota 4.172334e-04
+313  ws3 ECM        Bulk 2017               Euryarchaeota 4.144119e-04
+314  ws3 ECM        Bulk 2022                Spirochaetes 4.132486e-04
+315  ws3 ECM Rhizosphere 2017                Spirochaetes 4.122512e-04
+316  ws7 ECM        Bulk 2017         Deinococcus-Thermus 4.085665e-04
+317  ws7 ECM        Bulk 2022                Spirochaetes 4.080840e-04
+318  ws3  AM Rhizosphere 2022               Parcubacteria 4.035163e-04
+319  ws3  AM Rhizosphere 2022              Woesearchaeota 3.997390e-04
+320  ws7  AM Rhizosphere 2017                Spirochaetes 3.996577e-04
+321  ws7  AM        Bulk 2022   Cyanobacteria/Chloroplast 3.963603e-04
+322  ws3  AM Rhizosphere 2017               Euryarchaeota 3.951234e-04
+323  ws3 ECM        Bulk 2022               Elusimicrobia 3.940660e-04
+324  ws3 ECM        Bulk 2017               Pacearchaeota 3.939941e-04
+325  ws3 ECM        Bulk 2022               Pacearchaeota 3.904816e-04
+326  ws3  AM Rhizosphere 2022         Deinococcus-Thermus 3.895014e-04
+327  ws3 ECM Rhizosphere 2022   Cyanobacteria/Chloroplast 3.858998e-04
+328  ws7  AM Rhizosphere 2022                 Nitrospirae 3.849597e-04
+329  ws3  AM        Bulk 2017              Marinimicrobia 3.810085e-04
+330  ws3  AM Rhizosphere 2017               Parcubacteria 3.719320e-04
+331  ws7 ECM        Bulk 2017              Marinimicrobia 3.697143e-04
+332  ws3 ECM        Bulk 2022             Rhodothermaeota 3.650657e-04
+333  ws3 ECM Rhizosphere 2017                     Plantae 3.616249e-04
+334  ws7  AM Rhizosphere 2017               Pacearchaeota 3.613919e-04
+335  ws7 ECM Rhizosphere 2017   Cyanobacteria/Chloroplast 3.583482e-04
+336  ws3 ECM        Bulk 2017                     Plantae 3.521687e-04
+337  ws7 ECM        Bulk 2017               Euryarchaeota 3.430802e-04
+338  ws3 ECM Rhizosphere 2017              Marinimicrobia 3.392351e-04
+339  ws7 ECM Rhizosphere 2017              Marinimicrobia 3.373209e-04
+340  ws3 ECM        Bulk 2017               Parcubacteria 3.369255e-04
+341  ws7  AM        Bulk 2022         Deinococcus-Thermus 3.310960e-04
+342  ws7 ECM        Bulk 2017   Cyanobacteria/Chloroplast 3.309087e-04
+343  ws3 ECM        Bulk 2022               Euryarchaeota 3.254115e-04
+344  ws3 ECM Rhizosphere 2022         Deinococcus-Thermus 3.196744e-04
+345  ws7 ECM Rhizosphere 2022         Deinococcus-Thermus 3.097696e-04
+346  ws3  AM        Bulk 2022                Spirochaetes 3.077984e-04
+347  ws3 ECM        Bulk 2017              Marinimicrobia 3.066852e-04
+348  ws7  AM Rhizosphere 2022             Deferribacteres 3.039401e-04
+349  ws3  AM        Bulk 2022               Elusimicrobia 3.012946e-04
+350  ws7  AM        Bulk 2017              Marinimicrobia 2.961412e-04
+351  ws3 ECM        Bulk 2017         Deinococcus-Thermus 2.961160e-04
+352  ws7 ECM        Bulk 2017               Parcubacteria 2.918750e-04
+353  ws7  AM        Bulk 2022               Euryarchaeota 2.903554e-04
+354  ws3  AM        Bulk 2017               Parcubacteria 2.902140e-04
+355  ws3  AM        Bulk 2017   Cyanobacteria/Chloroplast 2.870708e-04
+356  ws7 ECM Rhizosphere 2017               Parcubacteria 2.824425e-04
+357  ws3  AM        Bulk 2017                Spirochaetes 2.777152e-04
+358  ws3  AM Rhizosphere 2017      candidate division ZB3 2.776952e-04
+359  ws7  AM        Bulk 2022                Spirochaetes 2.768357e-04
+360  ws7  AM Rhizosphere 2022               Parcubacteria 2.763620e-04
+361  ws7  AM        Bulk 2022             Deferribacteres 2.759566e-04
+362  ws3 ECM Rhizosphere 2017               Parcubacteria 2.683759e-04
+363  ws3 ECM Rhizosphere 2017                 Nitrospirae 2.666159e-04
+364  ws7  AM        Bulk 2017   Cyanobacteria/Chloroplast 2.659140e-04
+365  ws3  AM        Bulk 2017               Pacearchaeota 2.653942e-04
+366  ws7  AM Rhizosphere 2017               Euryarchaeota 2.634434e-04
+367  ws3 ECM        Bulk 2017   Cyanobacteria/Chloroplast 2.617944e-04
+368  ws7  AM Rhizosphere 2017               Synergistetes 2.513136e-04
+369  ws7  AM        Bulk 2022               Parcubacteria 2.489322e-04
+370  ws3 ECM Rhizosphere 2017   Cyanobacteria/Chloroplast 2.467481e-04
+371  ws3 ECM        Bulk 2022         Deinococcus-Thermus 2.461878e-04
+372  ws7  AM        Bulk 2017               Pacearchaeota 2.456354e-04
+373  ws7 ECM Rhizosphere 2017      candidate division ZB3 2.454865e-04
+374  ws7  AM        Bulk 2022              Woesearchaeota 2.345334e-04
+375  ws3 ECM Rhizosphere 2017               Synergistetes 2.263278e-04
+376  ws3  AM        Bulk 2022               Pacearchaeota 2.252636e-04
+377  ws3  AM Rhizosphere 2017                     Plantae 2.227856e-04
+378  ws3  AM Rhizosphere 2017               Elusimicrobia 2.202301e-04
+379  ws3 ECM        Bulk 2017                 Nitrospirae 2.193853e-04
+380  ws3  AM Rhizosphere 2022               Elusimicrobia 2.167385e-04
+381  ws3 ECM Rhizosphere 2017      candidate division ZB3 2.158062e-04
+382  ws7 ECM        Bulk 2022              Marinimicrobia 2.117261e-04
+383  ws3  AM Rhizosphere 2022                     Plantae 2.039052e-04
+384  ws7 ECM Rhizosphere 2017               Pacearchaeota 2.025988e-04
+385  ws3  AM        Bulk 2022                     Plantae 2.008733e-04
+386  ws7 ECM Rhizosphere 2017               Euryarchaeota 1.991563e-04
+387  ws3  AM        Bulk 2017         Deinococcus-Thermus 1.967231e-04
+388  ws7  AM Rhizosphere 2017             Ignavibacteriae 1.961989e-04
+389  ws7  AM Rhizosphere 2017                     Plantae 1.961989e-04
+390  ws3 ECM        Bulk 2022               Parcubacteria 1.955003e-04
+391  ws3 ECM        Bulk 2017               Synergistetes 1.935603e-04
+392  ws3  AM        Bulk 2022   Cyanobacteria/Chloroplast 1.916332e-04
+393  ws3  AM        Bulk 2017             Ignavibacteriae 1.912066e-04
+394  ws3 ECM Rhizosphere 2022               Pacearchaeota 1.883626e-04
+395  ws7  AM Rhizosphere 2022               Pacearchaeota 1.842534e-04
+396  ws3 ECM Rhizosphere 2022      candidate division ZB3 1.835030e-04
+397  ws7  AM        Bulk 2017               Parcubacteria 1.832595e-04
+398  ws3  AM        Bulk 2017                     Plantae 1.810287e-04
+399  ws7  AM Rhizosphere 2017              Microgenomates 1.795010e-04
+400  ws7 ECM        Bulk 2017              Woesearchaeota 1.777104e-04
+401  ws7 ECM Rhizosphere 2022               Parcubacteria 1.776527e-04
+402  ws7  AM        Bulk 2017               Euryarchaeota 1.724243e-04
+403  ws3  AM        Bulk 2022               Parcubacteria 1.708886e-04
+404  ws3 ECM        Bulk 2022                 Nitrospirae 1.696985e-04
+405  ws7 ECM Rhizosphere 2022              Woesearchaeota 1.657874e-04
+406  ws3  AM        Bulk 2017               Elusimicrobia 1.620769e-04
+407  ws7 ECM Rhizosphere 2022                 Tenericutes 1.612399e-04
+408  ws3 ECM Rhizosphere 2022                     Plantae 1.609009e-04
+409  ws7  AM        Bulk 2017            Abditibacteriota 1.598620e-04
+410  ws3 ECM Rhizosphere 2017                 Tenericutes 1.584890e-04
+411  ws7  AM Rhizosphere 2017   Cyanobacteria/Chloroplast 1.579331e-04
+412  ws3 ECM Rhizosphere 2017               Pacearchaeota 1.541002e-04
+413  ws7  AM Rhizosphere 2017                 Nitrospirae 1.530632e-04
+414  ws7  AM Rhizosphere 2022               Euryarchaeota 1.526478e-04
+415  ws3 ECM Rhizosphere 2022                 Tenericutes 1.511434e-04
+416  ws3 ECM        Bulk 2022   Cyanobacteria/Chloroplast 1.506962e-04
+417  ws3  AM Rhizosphere 2017   Cyanobacteria/Chloroplast 1.495173e-04
+418  ws3 ECM Rhizosphere 2017         Deinococcus-Thermus 1.421290e-04
+419  ws3 ECM        Bulk 2017      candidate division ZB3 1.415622e-04
+420  ws3  AM        Bulk 2022      candidate division ZB3 1.414091e-04
+421  ws7 ECM Rhizosphere 2022              Marinimicrobia 1.391015e-04
+422  ws3  AM        Bulk 2017      candidate division ZB3 1.372516e-04
+423  ws3  AM        Bulk 2022         Deinococcus-Thermus 1.347911e-04
+424  ws3  AM Rhizosphere 2017             Ignavibacteriae 1.320111e-04
+425  ws7  AM        Bulk 2017                     Plantae 1.309291e-04
+426  ws3 ECM        Bulk 2022      candidate division ZB3 1.299364e-04
+427  ws7 ECM Rhizosphere 2022             Deferribacteres 1.292927e-04
+428  ws3 ECM        Bulk 2022                     Plantae 1.287563e-04
+429  ws7 ECM        Bulk 2022             Deferribacteres 1.278049e-04
+430  ws3  AM        Bulk 2022               Synergistetes 1.249968e-04
+431  ws7 ECM        Bulk 2022               Pacearchaeota 1.212236e-04
+432  ws7  AM Rhizosphere 2022                 Thermotogae 1.206024e-04
+433  ws3  AM        Bulk 2017            Campilobacterota 1.127674e-04
+434  ws3  AM        Bulk 2017             Deferribacteres 1.119776e-04
+435  ws7  AM Rhizosphere 2017              Marinimicrobia 1.102293e-04
+436  ws7  AM        Bulk 2017            Campilobacterota 1.096418e-04
+437  ws7  AM        Bulk 2017               Synergistetes 1.093436e-04
+438  ws7 ECM Rhizosphere 2022               Euryarchaeota 1.092478e-04
+439  ws7  AM Rhizosphere 2022             Ignavibacteriae 1.075398e-04
+440  ws7 ECM        Bulk 2017               Pacearchaeota 1.073886e-04
+441  ws3 ECM        Bulk 2017            Campilobacterota 1.069654e-04
+442  ws7 ECM        Bulk 2022             Ignavibacteriae 1.069580e-04
+443  ws7 ECM Rhizosphere 2022               Pacearchaeota 1.046073e-04
+444  ws3  AM Rhizosphere 2022               Pacearchaeota 1.039869e-04
+445  ws7  AM        Bulk 2022               Pacearchaeota 1.024133e-04
+446  ws7  AM Rhizosphere 2022         Deinococcus-Thermus 1.021494e-04
+447  ws3  AM        Bulk 2022            Campilobacterota 1.008066e-04
+448  ws3  AM Rhizosphere 2017               Pacearchaeota 1.006914e-04
+449  ws7  AM        Bulk 2022      candidate division ZB3 9.994256e-05
+450  ws7 ECM Rhizosphere 2017                Balneolaeota 9.967301e-05
+451  ws3  AM Rhizosphere 2022                 Nitrospirae 9.929593e-05
+452  ws7 ECM Rhizosphere 2017             Ignavibacteriae 9.837549e-05
+453  ws7 ECM        Bulk 2017                Balneolaeota 9.386833e-05
+454  ws3  AM        Bulk 2022             Ignavibacteriae 9.068856e-05
+455  ws7 ECM        Bulk 2022               Synergistetes 9.040774e-05
+456  ws3 ECM Rhizosphere 2022            Campilobacterota 8.839886e-05
+457  ws7 ECM Rhizosphere 2022               Synergistetes 8.836536e-05
+458  ws7 ECM Rhizosphere 2022            Abditibacteriota 8.742759e-05
+459  ws3 ECM        Bulk 2017                 Tenericutes 8.692648e-05
+460  ws3 ECM Rhizosphere 2017                Balneolaeota 8.630466e-05
+461  ws7 ECM Rhizosphere 2022             Ignavibacteriae 8.603384e-05
+462  ws3  AM        Bulk 2017                Balneolaeota 8.290354e-05
+463  ws7 ECM Rhizosphere 2017            Campilobacterota 8.248964e-05
+464  ws7 ECM        Bulk 2022               Euryarchaeota 8.165437e-05
+465  ws3  AM        Bulk 2022                 Tenericutes 7.952603e-05
+466  ws7 ECM        Bulk 2022      candidate division ZB3 7.878265e-05
+467  ws7 ECM        Bulk 2017            Campilobacterota 7.673356e-05
+468  ws3  AM Rhizosphere 2022            Campilobacterota 7.669678e-05
+469  ws7 ECM        Bulk 2022                Omnitrophica 7.591093e-05
+470  ws7 ECM Rhizosphere 2017               Synergistetes 7.420477e-05
+471  ws3 ECM Rhizosphere 2022               Synergistetes 7.210570e-05
+472  ws7  AM        Bulk 2022               Synergistetes 7.112993e-05
+473  ws7 ECM        Bulk 2022         Deinococcus-Thermus 6.939086e-05
+474  ws7  AM        Bulk 2017             Deferribacteres 6.749156e-05
+475  ws3 ECM        Bulk 2017             Ignavibacteriae 6.706693e-05
+476  ws3 ECM        Bulk 2022                 Tenericutes 6.495450e-05
+477  ws3  AM Rhizosphere 2017            Campilobacterota 6.446300e-05
+478  ws7  AM Rhizosphere 2022              Marinimicrobia 6.394187e-05
+479  ws3  AM Rhizosphere 2017              Microgenomates 6.348835e-05
+480  ws7  AM        Bulk 2022             Latescibacteria 6.347594e-05
+481  ws7 ECM        Bulk 2017             Ignavibacteriae 6.252646e-05
+482  ws3 ECM Rhizosphere 2022                Balneolaeota 6.173257e-05
+483  ws3 ECM Rhizosphere 2017 Candidatus Saccharibacteria 6.054335e-05
+484  ws7  AM Rhizosphere 2017                 Tenericutes 5.983366e-05
+485  ws3  AM Rhizosphere 2022                Balneolaeota 5.933434e-05
+486  ws3  AM Rhizosphere 2022                 Thermotogae 5.933434e-05
+487  ws3 ECM        Bulk 2022            Campilobacterota 5.882459e-05
+488  ws3  AM Rhizosphere 2022 Candidatus Saccharibacteria 5.714558e-05
+489  ws7 ECM        Bulk 2022                 Tenericutes 5.613331e-05
+490  ws7 ECM Rhizosphere 2017                 Tenericutes 5.602174e-05
+491  ws3  AM Rhizosphere 2022               Synergistetes 5.586288e-05
+492  ws7  AM Rhizosphere 2017               Cloacimonetes 5.511464e-05
+493  ws3  AM        Bulk 2017               Synergistetes 5.475022e-05
+494  ws7 ECM        Bulk 2022            Campilobacterota 5.459566e-05
+495  ws3 ECM        Bulk 2022               Aminicenantes 5.457459e-05
+496  ws3  AM        Bulk 2017               Aminicenantes 5.440205e-05
+497  ws3 ECM Rhizosphere 2017            Campilobacterota 5.419516e-05
+498  ws3  AM Rhizosphere 2017                Balneolaeota 5.271175e-05
+499  ws3 ECM Rhizosphere 2017             Ignavibacteriae 5.233117e-05
+500  ws7  AM Rhizosphere 2022                 Tenericutes 5.215590e-05
+501  ws7 ECM Rhizosphere 2017                 Thermotogae 5.037507e-05
+502  ws7 ECM Rhizosphere 2022               Cloacimonetes 5.033995e-05
+503  ws7  AM        Bulk 2022              Marinimicrobia 4.997128e-05
+504  ws7  AM Rhizosphere 2022               Synergistetes 4.932182e-05
+505  ws3  AM Rhizosphere 2022               Cloacimonetes 4.818891e-05
+506  ws7 ECM        Bulk 2017               Synergistetes 4.783520e-05
+507  ws3 ECM Rhizosphere 2022             Ignavibacteriae 4.761802e-05
+508  ws3 ECM        Bulk 2017               Aminicenantes 4.586274e-05
+509  ws3  AM        Bulk 2017 Candidatus Saccharibacteria 4.523163e-05
+510  ws7 ECM        Bulk 2017 Candidatus Saccharibacteria 4.498908e-05
+511  ws3  AM Rhizosphere 2022               Fibrobacteres 4.496081e-05
+512  ws3 ECM Rhizosphere 2022               Aminicenantes 4.488129e-05
+513  ws7  AM Rhizosphere 2022            Campilobacterota 4.447904e-05
+514  ws7  AM        Bulk 2022               Aminicenantes 4.231730e-05
+515  ws7  AM        Bulk 2022                 Thermotogae 4.231730e-05
+516  ws7 ECM Rhizosphere 2017               Crenarchaeota 4.153223e-05
+517  ws3  AM Rhizosphere 2017             Deferribacteres 4.137938e-05
+518  ws3 ECM        Bulk 2022                Balneolaeota 4.060205e-05
+519  ws3 ECM        Bulk 2022               Fibrobacteres 4.031445e-05
+520  ws7  AM        Bulk 2017             Ignavibacteriae 4.004004e-05
+521  ws3  AM Rhizosphere 2022                 Tenericutes 3.971822e-05
+522  ws3 ECM Rhizosphere 2022                Fusobacteria 3.912822e-05
+523  ws7  AM        Bulk 2022                Balneolaeota 3.893737e-05
+524  ws7 ECM        Bulk 2017                 Tenericutes 3.849369e-05
+525  ws7  AM Rhizosphere 2017            Campilobacterota 3.826579e-05
+526  ws7  AM Rhizosphere 2017             Deferribacteres 3.826579e-05
+527  ws7 ECM        Bulk 2022               Parcubacteria 3.734974e-05
+528  ws3 ECM        Bulk 2017                Omnitrophica 3.708132e-05
+529  ws7  AM Rhizosphere 2022      candidate division ZB3 3.706587e-05
+530  ws3  AM Rhizosphere 2017               Aminicenantes 3.643784e-05
+531  ws7 ECM        Bulk 2017              Microgenomates 3.604088e-05
+532  ws3  AM        Bulk 2017              Microgenomates 3.567460e-05
+533  ws7  AM        Bulk 2022             Ignavibacteriae 3.555745e-05
+534  ws3  AM Rhizosphere 2022      candidate division ZB3 3.535738e-05
+535  ws3 ECM Rhizosphere 2022                 Thermotogae 3.488443e-05
+536  ws7 ECM        Bulk 2022                 Thermotogae 3.469543e-05
+537  ws3  AM Rhizosphere 2017                 Tenericutes 3.386868e-05
+538  ws3  AM        Bulk 2017                 Tenericutes 3.337627e-05
+539  ws3  AM        Bulk 2017                Omnitrophica 3.326776e-05
+540  ws7 ECM Rhizosphere 2017                Omnitrophica 3.319170e-05
+541  ws3 ECM Rhizosphere 2017                Fusobacteria 3.318863e-05
+542  ws3 ECM        Bulk 2017              Chrysiogenetes 3.267333e-05
+543  ws7 ECM Rhizosphere 2022                 Thermotogae 3.260532e-05
+544  ws3  AM        Bulk 2022                Balneolaeota 3.245436e-05
+545  ws3 ECM        Bulk 2017 Candidatus Saccharibacteria 3.241474e-05
+546  ws3 ECM        Bulk 2022              Microgenomates 3.231976e-05
+547  ws7 ECM Rhizosphere 2022      candidate division ZB3 3.215606e-05
+548  ws3  AM Rhizosphere 2017                Fusobacteria 3.094902e-05
+549  ws3 ECM        Bulk 2017                 Thermotogae 3.090434e-05
+550  ws3 ECM        Bulk 2022               Synergistetes 3.082473e-05
+551  ws7 ECM        Bulk 2017               Cloacimonetes 3.052817e-05
+552  ws3 ECM        Bulk 2022                Omnitrophica 3.022215e-05
+553  ws3 ECM Rhizosphere 2017               Cloacimonetes 2.992740e-05
+554  ws3  AM        Bulk 2022 Candidatus Saccharibacteria 2.917011e-05
+555  ws7  AM        Bulk 2022 Candidatus Saccharibacteria 2.881263e-05
+556  ws3 ECM Rhizosphere 2022               Cloacimonetes 2.850522e-05
+557  ws7 ECM        Bulk 2022               Cloacimonetes 2.795795e-05
+558  ws3  AM        Bulk 2022              Microgenomates 2.770467e-05
+559  ws3 ECM Rhizosphere 2022              Microgenomates 2.744993e-05
+560  ws3  AM Rhizosphere 2022            Abditibacteriota 2.583312e-05
+561  ws3  AM Rhizosphere 2022             Ignavibacteriae 2.583312e-05
+562  ws7 ECM        Bulk 2017      candidate division ZB3 2.581500e-05
+563  ws3  AM        Bulk 2022            Abditibacteriota 2.577984e-05
+564  ws3  AM        Bulk 2022                Omnitrophica 2.558526e-05
+565  ws7 ECM        Bulk 2022              Microgenomates 2.530364e-05
+566  ws3  AM        Bulk 2022               Cloacimonetes 2.475560e-05
+567  ws7  AM Rhizosphere 2022             Latescibacteria 2.466091e-05
+568  ws3 ECM        Bulk 2017              Microgenomates 2.430783e-05
+569  ws3  AM        Bulk 2017               Cloacimonetes 2.392774e-05
+570  ws3 ECM        Bulk 2022            Abditibacteriota 2.256982e-05
+571  ws7  AM        Bulk 2017              Microgenomates 2.249719e-05
+572  ws7  AM        Bulk 2017                 Tenericutes 2.249719e-05
+573  ws7  AM Rhizosphere 2022                Balneolaeota 2.223952e-05
+574  ws7 ECM Rhizosphere 2022            Campilobacterota 2.166200e-05
+575  ws7 ECM        Bulk 2017                 Thermotogae 2.120529e-05
+576  ws7  AM        Bulk 2022            Abditibacteriota 2.115865e-05
+577  ws7  AM        Bulk 2022            Campilobacterota 2.115865e-05
+578  ws7  AM        Bulk 2022                 Tenericutes 2.115865e-05
+579  ws3 ECM Rhizosphere 2022 Candidatus Saccharibacteria 2.061941e-05
+580  ws3 ECM Rhizosphere 2022                 Nitrospirae 2.061941e-05
+581  ws3 ECM Rhizosphere 2017                 Thermotogae 2.036363e-05
+582  ws3 ECM        Bulk 2022               Cloacimonetes 2.015723e-05
+583  ws3 ECM Rhizosphere 2022              Chrysiogenetes 1.956411e-05
+584  ws7 ECM        Bulk 2022               Aminicenantes 1.878358e-05
+585  ws3 ECM Rhizosphere 2022            Abditibacteriota 1.865482e-05
+586  ws7  AM        Bulk 2022                        BRC1 1.777873e-05
+587  ws7  AM        Bulk 2022               Lentisphaerae 1.777873e-05
+588  ws7  AM        Bulk 2022              Microgenomates 1.777873e-05
+589  ws7 ECM        Bulk 2017             Latescibacteria 1.730703e-05
+590  ws3  AM        Bulk 2022              Chrysiogenetes 1.705684e-05
+591  ws3 ECM Rhizosphere 2017              Microgenomates 1.691446e-05
+592  ws3  AM Rhizosphere 2017 Candidatus Saccharibacteria 1.662016e-05
+593  ws3  AM        Bulk 2017               Crenarchaeota 1.652210e-05
+594  ws3 ECM        Bulk 2017               Crenarchaeota 1.556033e-05
+595  ws3  AM        Bulk 2017            Abditibacteriota 1.534566e-05
+596  ws3  AM        Bulk 2017                 Thermotogae 1.534566e-05
+597  ws3 ECM Rhizosphere 2022                Omnitrophica 1.486900e-05
+598  ws7  AM Rhizosphere 2022            Abditibacteriota 1.482635e-05
+599  ws7  AM        Bulk 2017                 Thermotogae 1.478087e-05
+600  ws7 ECM Rhizosphere 2017          Kiritimatiellaeota 1.459300e-05
+601  ws3  AM        Bulk 2022               Aminicenantes 1.385233e-05
+602  ws3 ECM Rhizosphere 2017              Chrysiogenetes 1.381922e-05
+603  ws3  AM Rhizosphere 2022               Aminicenantes 1.291656e-05
+604  ws7 ECM        Bulk 2017             Deferribacteres 1.255178e-05
+605  ws3 ECM        Bulk 2022                 Thermotogae 1.218992e-05
+606  ws3  AM        Bulk 2017              Chrysiogenetes 1.196387e-05
+607  ws3 ECM        Bulk 2017               Fibrobacteres 1.167025e-05
+608  ws3 ECM Rhizosphere 2022             Latescibacteria 1.122032e-05
+609  ws7  AM Rhizosphere 2022 Candidatus Saccharibacteria 1.118568e-05
+610  ws7 ECM        Bulk 2017            Abditibacteriota 1.093733e-05
+611  ws7 ECM Rhizosphere 2022               Aminicenantes 1.071869e-05
+612  ws3 ECM        Bulk 2022              Chrysiogenetes 1.006492e-05
+613  ws3  AM        Bulk 2022               Fibrobacteres 9.723370e-06
+614  ws7 ECM Rhizosphere 2017               Fibrobacteres 9.651205e-06
+615  ws7 ECM Rhizosphere 2017               Cloacimonetes 9.406630e-06
+616  ws3  AM Rhizosphere 2017               Cloacimonetes 9.109459e-06
+617  ws7 ECM        Bulk 2017                        BRC1 8.653513e-06
+618  ws7 ECM Rhizosphere 2017              Microgenomates 8.634684e-06
+619  ws3 ECM        Bulk 2017            Abditibacteriota 7.672006e-06
+620  ws3 ECM        Bulk 2017                Balneolaeota 7.672006e-06
+621  ws3 ECM Rhizosphere 2017               Aminicenantes 6.909609e-06
+622  ws3 ECM Rhizosphere 2017                Omnitrophica 6.909609e-06
+623  ws3 ECM Rhizosphere 2017               Fibrobacteres 6.637726e-06
+624  ws3  AM Rhizosphere 2017               Fibrobacteres 6.189804e-06
+625  ws3  AM Rhizosphere 2017                Omnitrophica 6.189804e-06
+626  ws3 ECM Rhizosphere 2017               Lentisphaerae 4.228616e-06
+627  ws3 ECM        Bulk 2017               Cloacimonetes 3.890082e-06
+628  ws3  AM        Bulk 2017                Acetothermia 0.000000e+00
+629  ws3  AM        Bulk 2017                   Aquificae 0.000000e+00
+630  ws3  AM        Bulk 2017                        BRC1 0.000000e+00
+631  ws3  AM        Bulk 2017    Candidatus Calescamantes 0.000000e+00
+632  ws3  AM        Bulk 2017              Diapherotrites 0.000000e+00
+633  ws3  AM        Bulk 2017               Fibrobacteres 0.000000e+00
+634  ws3  AM        Bulk 2017                Fusobacteria 0.000000e+00
+635  ws3  AM        Bulk 2017             Hydrogenedentes 0.000000e+00
+636  ws3  AM        Bulk 2017          Kiritimatiellaeota 0.000000e+00
+637  ws3  AM        Bulk 2017             Latescibacteria 0.000000e+00
+638  ws3  AM        Bulk 2017               Lentisphaerae 0.000000e+00
+639  ws3  AM        Bulk 2017           Nanohaloarchaeota 0.000000e+00
+640  ws3  AM        Bulk 2017               Parvarchaeota 0.000000e+00
+641  ws3  AM        Bulk 2017                         SR1 0.000000e+00
+642  ws3  AM        Bulk 2017       Thermodesulfobacteria 0.000000e+00
+643  ws3  AM        Bulk 2022                Acetothermia 0.000000e+00
+644  ws3  AM        Bulk 2022                   Aquificae 0.000000e+00
+645  ws3  AM        Bulk 2022                        BRC1 0.000000e+00
+646  ws3  AM        Bulk 2022    Candidatus Calescamantes 0.000000e+00
+647  ws3  AM        Bulk 2022               Crenarchaeota 0.000000e+00
+648  ws3  AM        Bulk 2022              Diapherotrites 0.000000e+00
+649  ws3  AM        Bulk 2022                Fusobacteria 0.000000e+00
+650  ws3  AM        Bulk 2022             Hydrogenedentes 0.000000e+00
+651  ws3  AM        Bulk 2022          Kiritimatiellaeota 0.000000e+00
+652  ws3  AM        Bulk 2022             Latescibacteria 0.000000e+00
+653  ws3  AM        Bulk 2022               Lentisphaerae 0.000000e+00
+654  ws3  AM        Bulk 2022           Nanohaloarchaeota 0.000000e+00
+655  ws3  AM        Bulk 2022               Parvarchaeota 0.000000e+00
+656  ws3  AM        Bulk 2022                         SR1 0.000000e+00
+657  ws3  AM        Bulk 2022       Thermodesulfobacteria 0.000000e+00
+658  ws3  AM        Bulk 2022                 Thermotogae 0.000000e+00
+659  ws3  AM Rhizosphere 2017            Abditibacteriota 0.000000e+00
+660  ws3  AM Rhizosphere 2017                Acetothermia 0.000000e+00
+661  ws3  AM Rhizosphere 2017                   Aquificae 0.000000e+00
+662  ws3  AM Rhizosphere 2017                        BRC1 0.000000e+00
+663  ws3  AM Rhizosphere 2017    Candidatus Calescamantes 0.000000e+00
+664  ws3  AM Rhizosphere 2017              Chrysiogenetes 0.000000e+00
+665  ws3  AM Rhizosphere 2017               Crenarchaeota 0.000000e+00
+666  ws3  AM Rhizosphere 2017              Diapherotrites 0.000000e+00
+667  ws3  AM Rhizosphere 2017             Hydrogenedentes 0.000000e+00
+668  ws3  AM Rhizosphere 2017          Kiritimatiellaeota 0.000000e+00
+669  ws3  AM Rhizosphere 2017             Latescibacteria 0.000000e+00
+670  ws3  AM Rhizosphere 2017               Lentisphaerae 0.000000e+00
+671  ws3  AM Rhizosphere 2017           Nanohaloarchaeota 0.000000e+00
+672  ws3  AM Rhizosphere 2017               Parvarchaeota 0.000000e+00
+673  ws3  AM Rhizosphere 2017                         SR1 0.000000e+00
+674  ws3  AM Rhizosphere 2017       Thermodesulfobacteria 0.000000e+00
+675  ws3  AM Rhizosphere 2017                 Thermotogae 0.000000e+00
+676  ws3  AM Rhizosphere 2022                Acetothermia 0.000000e+00
+677  ws3  AM Rhizosphere 2022                   Aquificae 0.000000e+00
+678  ws3  AM Rhizosphere 2022                        BRC1 0.000000e+00
+679  ws3  AM Rhizosphere 2022    Candidatus Calescamantes 0.000000e+00
+680  ws3  AM Rhizosphere 2022              Chrysiogenetes 0.000000e+00
+681  ws3  AM Rhizosphere 2022               Crenarchaeota 0.000000e+00
+682  ws3  AM Rhizosphere 2022              Diapherotrites 0.000000e+00
+683  ws3  AM Rhizosphere 2022                Fusobacteria 0.000000e+00
+684  ws3  AM Rhizosphere 2022             Hydrogenedentes 0.000000e+00
+685  ws3  AM Rhizosphere 2022          Kiritimatiellaeota 0.000000e+00
+686  ws3  AM Rhizosphere 2022             Latescibacteria 0.000000e+00
+687  ws3  AM Rhizosphere 2022               Lentisphaerae 0.000000e+00
+688  ws3  AM Rhizosphere 2022              Microgenomates 0.000000e+00
+689  ws3  AM Rhizosphere 2022           Nanohaloarchaeota 0.000000e+00
+690  ws3  AM Rhizosphere 2022                Omnitrophica 0.000000e+00
+691  ws3  AM Rhizosphere 2022               Parvarchaeota 0.000000e+00
+692  ws3  AM Rhizosphere 2022                         SR1 0.000000e+00
+693  ws3  AM Rhizosphere 2022       Thermodesulfobacteria 0.000000e+00
+694  ws3 ECM        Bulk 2017                Acetothermia 0.000000e+00
+695  ws3 ECM        Bulk 2017                   Aquificae 0.000000e+00
+696  ws3 ECM        Bulk 2017                        BRC1 0.000000e+00
+697  ws3 ECM        Bulk 2017    Candidatus Calescamantes 0.000000e+00
+698  ws3 ECM        Bulk 2017              Diapherotrites 0.000000e+00
+699  ws3 ECM        Bulk 2017                Fusobacteria 0.000000e+00
+700  ws3 ECM        Bulk 2017             Hydrogenedentes 0.000000e+00
+701  ws3 ECM        Bulk 2017          Kiritimatiellaeota 0.000000e+00
+702  ws3 ECM        Bulk 2017             Latescibacteria 0.000000e+00
+703  ws3 ECM        Bulk 2017               Lentisphaerae 0.000000e+00
+704  ws3 ECM        Bulk 2017           Nanohaloarchaeota 0.000000e+00
+705  ws3 ECM        Bulk 2017               Parvarchaeota 0.000000e+00
+706  ws3 ECM        Bulk 2017                         SR1 0.000000e+00
+707  ws3 ECM        Bulk 2017       Thermodesulfobacteria 0.000000e+00
+708  ws3 ECM        Bulk 2022                Acetothermia 0.000000e+00
+709  ws3 ECM        Bulk 2022                   Aquificae 0.000000e+00
+710  ws3 ECM        Bulk 2022                        BRC1 0.000000e+00
+711  ws3 ECM        Bulk 2022    Candidatus Calescamantes 0.000000e+00
+712  ws3 ECM        Bulk 2022 Candidatus Saccharibacteria 0.000000e+00
+713  ws3 ECM        Bulk 2022               Crenarchaeota 0.000000e+00
+714  ws3 ECM        Bulk 2022              Diapherotrites 0.000000e+00
+715  ws3 ECM        Bulk 2022                Fusobacteria 0.000000e+00
+716  ws3 ECM        Bulk 2022             Hydrogenedentes 0.000000e+00
+717  ws3 ECM        Bulk 2022             Ignavibacteriae 0.000000e+00
+718  ws3 ECM        Bulk 2022          Kiritimatiellaeota 0.000000e+00
+719  ws3 ECM        Bulk 2022             Latescibacteria 0.000000e+00
+720  ws3 ECM        Bulk 2022               Lentisphaerae 0.000000e+00
+721  ws3 ECM        Bulk 2022           Nanohaloarchaeota 0.000000e+00
+722  ws3 ECM        Bulk 2022               Parvarchaeota 0.000000e+00
+723  ws3 ECM        Bulk 2022                         SR1 0.000000e+00
+724  ws3 ECM        Bulk 2022       Thermodesulfobacteria 0.000000e+00
+725  ws3 ECM Rhizosphere 2017            Abditibacteriota 0.000000e+00
+726  ws3 ECM Rhizosphere 2017                Acetothermia 0.000000e+00
+727  ws3 ECM Rhizosphere 2017                   Aquificae 0.000000e+00
+728  ws3 ECM Rhizosphere 2017                        BRC1 0.000000e+00
+729  ws3 ECM Rhizosphere 2017    Candidatus Calescamantes 0.000000e+00
+730  ws3 ECM Rhizosphere 2017               Crenarchaeota 0.000000e+00
+731  ws3 ECM Rhizosphere 2017              Diapherotrites 0.000000e+00
+732  ws3 ECM Rhizosphere 2017             Hydrogenedentes 0.000000e+00
+733  ws3 ECM Rhizosphere 2017          Kiritimatiellaeota 0.000000e+00
+734  ws3 ECM Rhizosphere 2017             Latescibacteria 0.000000e+00
+735  ws3 ECM Rhizosphere 2017           Nanohaloarchaeota 0.000000e+00
+736  ws3 ECM Rhizosphere 2017               Parvarchaeota 0.000000e+00
+737  ws3 ECM Rhizosphere 2017                         SR1 0.000000e+00
+738  ws3 ECM Rhizosphere 2017       Thermodesulfobacteria 0.000000e+00
+739  ws3 ECM Rhizosphere 2022                Acetothermia 0.000000e+00
+740  ws3 ECM Rhizosphere 2022                   Aquificae 0.000000e+00
+741  ws3 ECM Rhizosphere 2022                        BRC1 0.000000e+00
+742  ws3 ECM Rhizosphere 2022    Candidatus Calescamantes 0.000000e+00
+743  ws3 ECM Rhizosphere 2022               Crenarchaeota 0.000000e+00
+744  ws3 ECM Rhizosphere 2022              Diapherotrites 0.000000e+00
+745  ws3 ECM Rhizosphere 2022               Fibrobacteres 0.000000e+00
+746  ws3 ECM Rhizosphere 2022             Hydrogenedentes 0.000000e+00
+747  ws3 ECM Rhizosphere 2022          Kiritimatiellaeota 0.000000e+00
+748  ws3 ECM Rhizosphere 2022               Lentisphaerae 0.000000e+00
+749  ws3 ECM Rhizosphere 2022           Nanohaloarchaeota 0.000000e+00
+750  ws3 ECM Rhizosphere 2022               Parvarchaeota 0.000000e+00
+751  ws3 ECM Rhizosphere 2022                         SR1 0.000000e+00
+752  ws3 ECM Rhizosphere 2022       Thermodesulfobacteria 0.000000e+00
+753  ws7  AM        Bulk 2017                Acetothermia 0.000000e+00
+754  ws7  AM        Bulk 2017               Aminicenantes 0.000000e+00
+755  ws7  AM        Bulk 2017                   Aquificae 0.000000e+00
+756  ws7  AM        Bulk 2017                        BRC1 0.000000e+00
+757  ws7  AM        Bulk 2017                Balneolaeota 0.000000e+00
+758  ws7  AM        Bulk 2017    Candidatus Calescamantes 0.000000e+00
+759  ws7  AM        Bulk 2017 Candidatus Saccharibacteria 0.000000e+00
+760  ws7  AM        Bulk 2017              Chrysiogenetes 0.000000e+00
+761  ws7  AM        Bulk 2017               Cloacimonetes 0.000000e+00
+762  ws7  AM        Bulk 2017               Crenarchaeota 0.000000e+00
+763  ws7  AM        Bulk 2017              Diapherotrites 0.000000e+00
+764  ws7  AM        Bulk 2017               Fibrobacteres 0.000000e+00
+765  ws7  AM        Bulk 2017                Fusobacteria 0.000000e+00
+766  ws7  AM        Bulk 2017             Hydrogenedentes 0.000000e+00
+767  ws7  AM        Bulk 2017          Kiritimatiellaeota 0.000000e+00
+768  ws7  AM        Bulk 2017             Latescibacteria 0.000000e+00
+769  ws7  AM        Bulk 2017               Lentisphaerae 0.000000e+00
+770  ws7  AM        Bulk 2017           Nanohaloarchaeota 0.000000e+00
+771  ws7  AM        Bulk 2017                Omnitrophica 0.000000e+00
+772  ws7  AM        Bulk 2017               Parvarchaeota 0.000000e+00
+773  ws7  AM        Bulk 2017                         SR1 0.000000e+00
+774  ws7  AM        Bulk 2017       Thermodesulfobacteria 0.000000e+00
+775  ws7  AM        Bulk 2017      candidate division ZB3 0.000000e+00
+776  ws7  AM        Bulk 2022                Acetothermia 0.000000e+00
+777  ws7  AM        Bulk 2022                   Aquificae 0.000000e+00
+778  ws7  AM        Bulk 2022    Candidatus Calescamantes 0.000000e+00
+779  ws7  AM        Bulk 2022              Chrysiogenetes 0.000000e+00
+780  ws7  AM        Bulk 2022               Cloacimonetes 0.000000e+00
+781  ws7  AM        Bulk 2022               Crenarchaeota 0.000000e+00
+782  ws7  AM        Bulk 2022              Diapherotrites 0.000000e+00
+783  ws7  AM        Bulk 2022               Fibrobacteres 0.000000e+00
+784  ws7  AM        Bulk 2022                Fusobacteria 0.000000e+00
+785  ws7  AM        Bulk 2022             Hydrogenedentes 0.000000e+00
+786  ws7  AM        Bulk 2022          Kiritimatiellaeota 0.000000e+00
+787  ws7  AM        Bulk 2022           Nanohaloarchaeota 0.000000e+00
+788  ws7  AM        Bulk 2022                Omnitrophica 0.000000e+00
+789  ws7  AM        Bulk 2022               Parvarchaeota 0.000000e+00
+790  ws7  AM        Bulk 2022                         SR1 0.000000e+00
+791  ws7  AM        Bulk 2022       Thermodesulfobacteria 0.000000e+00
+792  ws7  AM Rhizosphere 2017            Abditibacteriota 0.000000e+00
+793  ws7  AM Rhizosphere 2017                Acetothermia 0.000000e+00
+794  ws7  AM Rhizosphere 2017               Aminicenantes 0.000000e+00
+795  ws7  AM Rhizosphere 2017                   Aquificae 0.000000e+00
+796  ws7  AM Rhizosphere 2017                        BRC1 0.000000e+00
+797  ws7  AM Rhizosphere 2017                Balneolaeota 0.000000e+00
+798  ws7  AM Rhizosphere 2017    Candidatus Calescamantes 0.000000e+00
+799  ws7  AM Rhizosphere 2017 Candidatus Saccharibacteria 0.000000e+00
+800  ws7  AM Rhizosphere 2017              Chrysiogenetes 0.000000e+00
+801  ws7  AM Rhizosphere 2017               Crenarchaeota 0.000000e+00
+802  ws7  AM Rhizosphere 2017              Diapherotrites 0.000000e+00
+803  ws7  AM Rhizosphere 2017               Fibrobacteres 0.000000e+00
+804  ws7  AM Rhizosphere 2017                Fusobacteria 0.000000e+00
+805  ws7  AM Rhizosphere 2017             Hydrogenedentes 0.000000e+00
+806  ws7  AM Rhizosphere 2017          Kiritimatiellaeota 0.000000e+00
+807  ws7  AM Rhizosphere 2017             Latescibacteria 0.000000e+00
+808  ws7  AM Rhizosphere 2017               Lentisphaerae 0.000000e+00
+809  ws7  AM Rhizosphere 2017           Nanohaloarchaeota 0.000000e+00
+810  ws7  AM Rhizosphere 2017                Omnitrophica 0.000000e+00
+811  ws7  AM Rhizosphere 2017               Parcubacteria 0.000000e+00
+812  ws7  AM Rhizosphere 2017               Parvarchaeota 0.000000e+00
+813  ws7  AM Rhizosphere 2017                         SR1 0.000000e+00
+814  ws7  AM Rhizosphere 2017       Thermodesulfobacteria 0.000000e+00
+815  ws7  AM Rhizosphere 2017                 Thermotogae 0.000000e+00
+816  ws7  AM Rhizosphere 2017      candidate division ZB3 0.000000e+00
+817  ws7  AM Rhizosphere 2022                Acetothermia 0.000000e+00
+818  ws7  AM Rhizosphere 2022               Aminicenantes 0.000000e+00
+819  ws7  AM Rhizosphere 2022                   Aquificae 0.000000e+00
+820  ws7  AM Rhizosphere 2022                        BRC1 0.000000e+00
+821  ws7  AM Rhizosphere 2022    Candidatus Calescamantes 0.000000e+00
+822  ws7  AM Rhizosphere 2022              Chrysiogenetes 0.000000e+00
+823  ws7  AM Rhizosphere 2022               Cloacimonetes 0.000000e+00
+824  ws7  AM Rhizosphere 2022               Crenarchaeota 0.000000e+00
+825  ws7  AM Rhizosphere 2022              Diapherotrites 0.000000e+00
+826  ws7  AM Rhizosphere 2022               Fibrobacteres 0.000000e+00
+827  ws7  AM Rhizosphere 2022                Fusobacteria 0.000000e+00
+828  ws7  AM Rhizosphere 2022             Hydrogenedentes 0.000000e+00
+829  ws7  AM Rhizosphere 2022          Kiritimatiellaeota 0.000000e+00
+830  ws7  AM Rhizosphere 2022               Lentisphaerae 0.000000e+00
+831  ws7  AM Rhizosphere 2022              Microgenomates 0.000000e+00
+832  ws7  AM Rhizosphere 2022           Nanohaloarchaeota 0.000000e+00
+833  ws7  AM Rhizosphere 2022                Omnitrophica 0.000000e+00
+834  ws7  AM Rhizosphere 2022               Parvarchaeota 0.000000e+00
+835  ws7  AM Rhizosphere 2022                         SR1 0.000000e+00
+836  ws7  AM Rhizosphere 2022       Thermodesulfobacteria 0.000000e+00
+837  ws7 ECM        Bulk 2017                Acetothermia 0.000000e+00
+838  ws7 ECM        Bulk 2017               Aminicenantes 0.000000e+00
+839  ws7 ECM        Bulk 2017                   Aquificae 0.000000e+00
+840  ws7 ECM        Bulk 2017    Candidatus Calescamantes 0.000000e+00
+841  ws7 ECM        Bulk 2017              Chrysiogenetes 0.000000e+00
+842  ws7 ECM        Bulk 2017               Crenarchaeota 0.000000e+00
+843  ws7 ECM        Bulk 2017              Diapherotrites 0.000000e+00
+844  ws7 ECM        Bulk 2017               Fibrobacteres 0.000000e+00
+845  ws7 ECM        Bulk 2017                Fusobacteria 0.000000e+00
+846  ws7 ECM        Bulk 2017             Hydrogenedentes 0.000000e+00
+847  ws7 ECM        Bulk 2017          Kiritimatiellaeota 0.000000e+00
+848  ws7 ECM        Bulk 2017               Lentisphaerae 0.000000e+00
+849  ws7 ECM        Bulk 2017           Nanohaloarchaeota 0.000000e+00
+850  ws7 ECM        Bulk 2017                Omnitrophica 0.000000e+00
+851  ws7 ECM        Bulk 2017               Parvarchaeota 0.000000e+00
+852  ws7 ECM        Bulk 2017                         SR1 0.000000e+00
+853  ws7 ECM        Bulk 2017       Thermodesulfobacteria 0.000000e+00
+854  ws7 ECM        Bulk 2022            Abditibacteriota 0.000000e+00
+855  ws7 ECM        Bulk 2022                Acetothermia 0.000000e+00
+856  ws7 ECM        Bulk 2022                   Aquificae 0.000000e+00
+857  ws7 ECM        Bulk 2022                        BRC1 0.000000e+00
+858  ws7 ECM        Bulk 2022                Balneolaeota 0.000000e+00
+859  ws7 ECM        Bulk 2022    Candidatus Calescamantes 0.000000e+00
+860  ws7 ECM        Bulk 2022 Candidatus Saccharibacteria 0.000000e+00
+861  ws7 ECM        Bulk 2022              Chrysiogenetes 0.000000e+00
+862  ws7 ECM        Bulk 2022               Crenarchaeota 0.000000e+00
+863  ws7 ECM        Bulk 2022              Diapherotrites 0.000000e+00
+864  ws7 ECM        Bulk 2022               Fibrobacteres 0.000000e+00
+865  ws7 ECM        Bulk 2022                Fusobacteria 0.000000e+00
+866  ws7 ECM        Bulk 2022             Hydrogenedentes 0.000000e+00
+867  ws7 ECM        Bulk 2022          Kiritimatiellaeota 0.000000e+00
+868  ws7 ECM        Bulk 2022             Latescibacteria 0.000000e+00
+869  ws7 ECM        Bulk 2022               Lentisphaerae 0.000000e+00
+870  ws7 ECM        Bulk 2022           Nanohaloarchaeota 0.000000e+00
+871  ws7 ECM        Bulk 2022               Parvarchaeota 0.000000e+00
+872  ws7 ECM        Bulk 2022                         SR1 0.000000e+00
+873  ws7 ECM        Bulk 2022       Thermodesulfobacteria 0.000000e+00
+874  ws7 ECM Rhizosphere 2017            Abditibacteriota 0.000000e+00
+875  ws7 ECM Rhizosphere 2017                Acetothermia 0.000000e+00
+876  ws7 ECM Rhizosphere 2017               Aminicenantes 0.000000e+00
+877  ws7 ECM Rhizosphere 2017                   Aquificae 0.000000e+00
+878  ws7 ECM Rhizosphere 2017                        BRC1 0.000000e+00
+879  ws7 ECM Rhizosphere 2017    Candidatus Calescamantes 0.000000e+00
+880  ws7 ECM Rhizosphere 2017 Candidatus Saccharibacteria 0.000000e+00
+881  ws7 ECM Rhizosphere 2017              Chrysiogenetes 0.000000e+00
+882  ws7 ECM Rhizosphere 2017             Deferribacteres 0.000000e+00
+883  ws7 ECM Rhizosphere 2017              Diapherotrites 0.000000e+00
+884  ws7 ECM Rhizosphere 2017                Fusobacteria 0.000000e+00
+885  ws7 ECM Rhizosphere 2017             Hydrogenedentes 0.000000e+00
+886  ws7 ECM Rhizosphere 2017             Latescibacteria 0.000000e+00
+887  ws7 ECM Rhizosphere 2017               Lentisphaerae 0.000000e+00
+888  ws7 ECM Rhizosphere 2017           Nanohaloarchaeota 0.000000e+00
+889  ws7 ECM Rhizosphere 2017               Parvarchaeota 0.000000e+00
+890  ws7 ECM Rhizosphere 2017                         SR1 0.000000e+00
+891  ws7 ECM Rhizosphere 2017       Thermodesulfobacteria 0.000000e+00
+892  ws7 ECM Rhizosphere 2022                Acetothermia 0.000000e+00
+893  ws7 ECM Rhizosphere 2022                   Aquificae 0.000000e+00
+894  ws7 ECM Rhizosphere 2022                        BRC1 0.000000e+00
+895  ws7 ECM Rhizosphere 2022                Balneolaeota 0.000000e+00
+896  ws7 ECM Rhizosphere 2022    Candidatus Calescamantes 0.000000e+00
+897  ws7 ECM Rhizosphere 2022 Candidatus Saccharibacteria 0.000000e+00
+898  ws7 ECM Rhizosphere 2022              Chrysiogenetes 0.000000e+00
+899  ws7 ECM Rhizosphere 2022               Crenarchaeota 0.000000e+00
+900  ws7 ECM Rhizosphere 2022              Diapherotrites 0.000000e+00
+901  ws7 ECM Rhizosphere 2022               Fibrobacteres 0.000000e+00
+902  ws7 ECM Rhizosphere 2022                Fusobacteria 0.000000e+00
+903  ws7 ECM Rhizosphere 2022             Hydrogenedentes 0.000000e+00
+904  ws7 ECM Rhizosphere 2022          Kiritimatiellaeota 0.000000e+00
+905  ws7 ECM Rhizosphere 2022             Latescibacteria 0.000000e+00
+906  ws7 ECM Rhizosphere 2022               Lentisphaerae 0.000000e+00
+907  ws7 ECM Rhizosphere 2022              Microgenomates 0.000000e+00
+908  ws7 ECM Rhizosphere 2022           Nanohaloarchaeota 0.000000e+00
+909  ws7 ECM Rhizosphere 2022                Omnitrophica 0.000000e+00
+910  ws7 ECM Rhizosphere 2022               Parvarchaeota 0.000000e+00
+911  ws7 ECM Rhizosphere 2022                         SR1 0.000000e+00
+912  ws7 ECM Rhizosphere 2022       Thermodesulfobacteria 0.000000e+00
+>     #write.csv("data/relative_abundance_fungal_phylum.csv")
+> ########################################
+> df.ab = ps %>% 
++     speedyseq::filter_tax_table(!is.na(phylum)) %>%
++     speedyseq::tax_glom(taxrank = "phylum") %>%
++     speedyseq::transform_sample_counts(function(x) x / sum(x)) %>%
++     speedyseq::psmelt() %>% filter(date == '2017' & soil == 'Rhizosphere') %>%
++     data.frame %>% 
++     group_by(site, sym, phylum) %>% 
++     mutate(median =  median(Abundance)) %>%
++     mutate(phylum = ifelse(median <= 0.01, 'Remainder', phylum)) %>%
++     data.frame %>%
++     group_by(site, sym, phylum, Sample)%>%
++     dplyr::summarize(abun=sum(Abundance))%>%
++     group_by(site, sym, phylum)%>%
++     dplyr::summarize(mean.abun = mean(abun)) %>%
++     data.frame %>% arrange(-mean.abun)
+`summarise()` has grouped output by 'site', 'sym', 'phylum'. You can override
+using the `.groups` argument.
+`summarise()` has grouped output by 'site', 'sym'. You can override using the
+`.groups` argument.
+> df.ab$phylum %>% unique()
+ [1] "Proteobacteria"           "Acidobacteria"           
+ [3] "Actinobacteria"           "Planctomycetes"          
+ [5] "Verrucomicrobia"          "Firmicutes"              
+ [7] "Chloroflexi"              "Remainder"               
+ [9] "Chlamydiae"               "Thaumarchaeota"          
+[11] "Bacteroidetes"            "candidate division WPS-2"
+> phy = c(df.ab %>% filter(phylum != 'Remainder') %>% arrange(-mean.abun) %>% .$phylum %>% unique(), 'Remainder')
+> 
+> options(
++   ggplot2.discrete.colour = pals::polychrome(25) %>% data.frame %>% .[3:25,1],
++   ggplot2.discrete.fill = c("#F6222E", "#FE00FA", "#16FF32", "#3283FE", "#FEAF16", "#B00068", "#1CFFCE", "#90AD1C", "#2ED9FF", "#DEA0FD", "#AA0DFE",'#353636')
++ )
+> 
+> df.ab %>% mutate(phylum = factor(phylum, levels = phy)) %>%
++  ggplot(aes(x = site, y = mean.abun, fill = phylum)) +
++         geom_bar(stat = 'identity', color = '#353636', alpha = 0.8) + 
++         facet_grid(.~sym) + 
++         ylab("Relative abundance") +
++         guides(fill=guide_legend(title="phylum")) + 
++         scale_y_continuous(limits = c(0, NA),
++                      expand = expansion(mult = c(0, 0.1))) + theme_bw()
+> ggsave(file = 'figures/relative-abundance_bacteria_site-sym_2017-Rhizosphere_phylum.svg', width = 6, height = 3, dpi = 900, units = 'in')
+> 
+> ########################################
+> df.ab = ps %>% 
++     speedyseq::filter_tax_table(!is.na(phylum)) %>%
++     speedyseq::tax_glom(taxrank = "phylum") %>%
++     speedyseq::transform_sample_counts(function(x) x / sum(x)) %>%
++     speedyseq::psmelt() %>% filter(date == '2017' & soil == 'Bulk') %>%
++     data.frame %>% 
++     group_by(site, sym, phylum) %>% 
++     mutate(median =  median(Abundance)) %>%
++     mutate(phylum = ifelse(median <= 0.01, 'Remainder', phylum)) %>%
++     data.frame %>%
++     group_by(site, sym, phylum, Sample)%>%
++     dplyr::summarize(abun=sum(Abundance))%>%
++     group_by(site, sym, phylum)%>%
++     dplyr::summarize(mean.abun = mean(abun)) %>%
++     data.frame %>% arrange(-mean.abun)
+`summarise()` has grouped output by 'site', 'sym', 'phylum'. You can override
+using the `.groups` argument.
+`summarise()` has grouped output by 'site', 'sym'. You can override using the
+`.groups` argument.
+> df.ab$phylum %>% unique()
+ [1] "Proteobacteria"           "Acidobacteria"           
+ [3] "Actinobacteria"           "Planctomycetes"          
+ [5] "Verrucomicrobia"          "Firmicutes"              
+ [7] "Chloroflexi"              "Remainder"               
+ [9] "Chlamydiae"               "candidate division WPS-2"
+[11] "Thaumarchaeota"          
+> phy = c(df.ab %>% filter(phylum != 'Remainder') %>% arrange(-mean.abun) %>% .$phylum %>% unique(), 'Remainder')
+> 
+> options(
++   ggplot2.discrete.colour = pals::polychrome(25) %>% data.frame %>% .[3:25,1],
++   ggplot2.discrete.fill = c("#F6222E", "#FE00FA", "#16FF32", "#3283FE", "#FEAF16", "#B00068", "#AA0DFE", "#90AD1C", "#2ED9FF", "#DEA0FD",'#353636')
++ )
+> 
+> df.ab %>% mutate(phylum = factor(phylum, levels = phy)) %>%
++  ggplot(aes(x = site, y = mean.abun, fill = phylum)) +
++         geom_bar(stat = 'identity', color = '#353636', alpha = 0.8) + 
++         facet_grid(.~sym) + 
++         ylab("Relative abundance") +
++         guides(fill=guide_legend(title="phylum")) + 
++         scale_y_continuous(limits = c(0, NA),
++                      expand = expansion(mult = c(0, 0.1))) + theme_bw()
+> ggsave(file = 'figures/relative-abundance_bacteria_site-sym_2017-Bulk_phylum.svg', width = 6, height = 3, dpi = 900, units = 'in')
+> 
+> ########################################
+> ########################################
+> df.ab = ps %>% 
++     speedyseq::filter_tax_table(!is.na(phylum)) %>%
++     speedyseq::tax_glom(taxrank = "phylum") %>%
++     speedyseq::transform_sample_counts(function(x) x / sum(x)) %>%
++     speedyseq::psmelt() %>% filter(date == '2022' & soil == 'Rhizosphere') %>%
++     data.frame %>% 
++     group_by(site, sym, phylum) %>% 
++     mutate(median =  median(Abundance)) %>%
++     mutate(phylum = ifelse(median <= 0.01, 'Remainder', phylum)) %>%
++     data.frame %>%
++     group_by(site, sym, phylum, Sample)%>%
++     dplyr::summarize(abun=sum(Abundance))%>%
++     group_by(site, sym, phylum)%>%
++     dplyr::summarize(mean.abun = mean(abun)) %>%
++     data.frame %>% arrange(-mean.abun)
+`summarise()` has grouped output by 'site', 'sym', 'phylum'. You can override
+using the `.groups` argument.
+`summarise()` has grouped output by 'site', 'sym'. You can override using the
+`.groups` argument.
+> 
+> df.ab$phylum %>% unique()
+ [1] "Proteobacteria"           "Acidobacteria"           
+ [3] "Actinobacteria"           "Planctomycetes"          
+ [5] "Verrucomicrobia"          "Remainder"               
+ [7] "Firmicutes"               "Chloroflexi"             
+ [9] "candidate division WPS-2" "Bacteroidetes"           
+> phy = c(df.ab %>% filter(phylum != 'Remainder') %>% arrange(-mean.abun) %>% .$phylum %>% unique(), 'Remainder')
+> 
+> options(
++   ggplot2.discrete.colour = pals::polychrome(25) %>% data.frame %>% .[3:25,1],
++   ggplot2.discrete.fill = c("#F6222E", "#FE00FA", "#16FF32", "#3283FE", "#FEAF16", 
++                             "#B00068", "#1CFFCE", "#90AD1C", "#2ED9FF", '#353636')
++ )
+> 
+> df.ab %>% mutate(phylum = factor(phylum, levels = phy)) %>%
++  ggplot(aes(x = site, y = mean.abun, fill = phylum)) +
++         geom_bar(stat = 'identity', color = '#353636', alpha = 0.8) + 
++         facet_grid(.~sym) + 
++         ylab("Relative abundance") +
++         guides(fill=guide_legend(title="phylum")) + 
++         scale_y_continuous(limits = c(0, NA),
++                      expand = expansion(mult = c(0, 0.1)))
+> ggsave(file = 'figures/relative-abundance_bacteria_site-sym_2022-Rhizosphere_phylum.svg', width = 6, height = 3, dpi = 900, units = 'in')
+> 
+> ########################################
+> df.ab = ps %>% 
++     speedyseq::filter_tax_table(!is.na(phylum)) %>%
++     speedyseq::tax_glom(taxrank = "phylum") %>%
++     speedyseq::transform_sample_counts(function(x) x / sum(x)) %>%
++     speedyseq::psmelt() %>% filter(date == '2022' & soil == 'Bulk') %>%
++     data.frame %>% 
++     group_by(site, sym, phylum) %>% 
++     mutate(median =  median(Abundance)) %>%
++     mutate(phylum = ifelse(median <= 0.01, 'Remainder', phylum)) %>%
++     data.frame %>%
++     group_by(site, sym, phylum, Sample)%>%
++     dplyr::summarize(abun=sum(Abundance))%>%
++     group_by(site, sym, phylum)%>%
++     dplyr::summarize(mean.abun = mean(abun)) %>%
++     data.frame %>% arrange(-mean.abun)
+`summarise()` has grouped output by 'site', 'sym', 'phylum'. You can override
+using the `.groups` argument.
+`summarise()` has grouped output by 'site', 'sym'. You can override using the
+`.groups` argument.
+> df.ab$phylum %>% unique()
+ [1] "Proteobacteria"           "Acidobacteria"           
+ [3] "Actinobacteria"           "Planctomycetes"          
+ [5] "Firmicutes"               "Verrucomicrobia"         
+ [7] "Remainder"                "Chloroflexi"             
+ [9] "candidate division WPS-2" "Chlamydiae"              
+> phy = c(df.ab %>% filter(phylum != 'Remainder') %>% arrange(-mean.abun) %>% .$phylum %>% unique(), 'Remainder')
+> 
+> options(
++   ggplot2.discrete.colour = pals::polychrome(25) %>% data.frame %>% .[3:25,1],
++   ggplot2.discrete.fill = c("#F6222E", "#FE00FA", "#16FF32", "#3283FE", "#FEAF16", 
++                             "#B00068", "#1CFFCE", "#90AD1C", "#2ED9FF", '#353636')
++ )
+> 
+> df.ab %>% mutate(phylum = factor(phylum, levels = phy)) %>%
++  ggplot(aes(x = site, y = mean.abun, fill = phylum)) +
++         geom_bar(stat = 'identity', color = '#353636', alpha = 0.8) + 
++         facet_grid(.~sym) + 
++         ylab("Relative abundance") +
++         guides(fill=guide_legend(title="phylum")) + 
++         scale_y_continuous(limits = c(0, NA),
++                      expand = expansion(mult = c(0, 0.1))) + theme_bw()
+> ggsave(file = 'figures/relative-abundance_bacteria_site-sym_2022-Bulk_phylum.svg', width = 6, height = 3, dpi = 900, units = 'in')
+> 
+> proc.time()
+   user  system elapsed 
+ 12.575   0.571  13.317 
