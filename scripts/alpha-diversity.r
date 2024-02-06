@@ -79,3 +79,33 @@ df.meta %>%
     facet_grid(date~soil) + ylab("Estimated number of species (ENSpie)") + theme(axis.title.x = element_blank()) + theme_bw()
 ggsave("figures/ens-diversity.svg", width = 6, height = 6, units = "in", dpi = 600)
 
+
+
+div_stats = function(var){
+    fml = formula(paste0(var, " ~ site * sym * date * soil"))
+    lm(fml, data = df.meta) %>%
+        emmeans::emmeans(., ~ sym * date | site * soil) %>% 
+        multcomp::cld(., Letters = letters) %>%
+        data.frame() %>% mutate(group = toupper(trimws(`.group`)))
+}
+
+df.meta %>% 
+    group_by(site, sym, date, soil) %>%
+    summarise(mean = mean(rich), se = sd(rich)/sqrt(n())) %>%
+    ggplot(aes(x = date, y = mean, fill = sym)) +
+    geom_linerange(aes(ymin = mean - se, ymax = mean + se), position = position_dodge(width = 0.5), linewidth = 1) +
+    geom_point(position = position_dodge(width = 0.5), size = 5, shape = 21) +
+    geom_text(data = div_stats("rich"), aes( x = date, y = upper.CL, label = group), position = position_dodge(width = 0.5)) +
+    facet_grid(site~soil) + ylab("Observed richness") + 
+    theme(axis.title.x = element_blank()) + theme_bw()
+
+
+df.meta %>% 
+    group_by(site, sym, date, soil) %>%
+    summarise(mean = mean(ens), se = sd(ens)/sqrt(n())) %>%
+    ggplot(aes(x = date, y = mean, fill = sym)) +
+    geom_linerange(aes(ymin = mean - se, ymax = mean + se), position = position_dodge(width = 0.5), linewidth = 1) +
+    geom_point(position = position_dodge(width = 0.5), size = 5, shape = 21) +
+    geom_text(data = div_stats("ens"), aes( x = date, y = upper.CL, label = group), position = position_dodge(width = 0.5)) +
+    facet_grid(site~soil) + ylab("Estimated number of species (ENSpie)") + theme(axis.title.x = element_blank()) + theme_bw()
+

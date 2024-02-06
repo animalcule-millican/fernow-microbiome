@@ -40,18 +40,18 @@ df.var %>%
 
 df.stat = df.var %>%
     lm(var ~ site * sym * soil * date, data = .) %>%
-    emmeans::emmeans(., ~ site * sym * soil | date) %>%
+    emmeans::emmeans(., ~ date + sym | soil + site) %>%
     multcomp::cld(., Letters = letters) %>%
     data.frame() %>%
     mutate(group = toupper(trimws(`.group`))) %>%
     select(-.group)
 ##################################################
 df.var %>%
-    ggplot(aes(x = sym, y = 1-var, color = soil)) +
+    ggplot(aes(x = sym, y = 1-var, color = date)) +
     geom_point(position = position_dodge(width = 0.6)) +
     geom_text(data = df.stat, aes(x = sym, y = ((1-upper.CL)+((1-upper.CL) * 0.05)), label = group),
                 position = position_dodge(width = 0.6), show.legend = FALSE) +
-    facet_grid(site ~ date) +
+    facet_grid(site ~ soil) +
     theme_bw() + ylab("Community Stability Index (1 - pwd variance)") +
     theme(axis.title.x = element_blank())
 ggsave("figures/community-stability_Sym-Site.svg", width = 3, height = 3, units = "in", dpi = 600)

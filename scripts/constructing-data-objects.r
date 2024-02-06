@@ -29,3 +29,13 @@ df.meta = df.meta %>% filter(sample_id %in% phyloseq::sample_names(ps)) %>%
 sample_data(ps) <- df.meta
 # Save data objects
 save(df.meta, ps, file = "data/fernow-analysis-data.RData")
+
+
+# combine soil measurement metadata into long form with a measurement date variable
+# will be useful when correlating to specific measurement date groups.
+col_classes = c(rep("character", 9), rep("numeric", 7))
+df6 = read.csv("data/mycorrhizal_kangi_brzostek_metadata_622.csv", header = TRUE, sep = ',', stringsAsFactors = FALSE, colClasses = col_classes)
+df7 = read.csv("data/mycorrhizal_kangi_brzostek_metadata_722.csv", header = TRUE, sep = ',', stringsAsFactors = FALSE, colClasses = col_classes)
+df8 = read.csv("data/mycorrhizal_kangi_brzostek_metadata_822.csv", header = TRUE, sep = ',', stringsAsFactors = FALSE, colClasses = col_classes)
+df.meta.soil = bind_rows(df6, df7, df8)
+write.csv(df.meta.soil, "data/mycorrhizal_kangi_brzostek_metadata_soil_measurements.csv", row.names = FALSE)

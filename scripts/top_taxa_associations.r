@@ -1,11 +1,14 @@
+"""
+Identifying top taxa related to differences in communitiy composition and mycorrhizal root colonization.
+"""
 # load packages
 library(tidyverse)
 library(speedyseq)
 # load data
 load("data/fernow-analysis-data.RData")
-#######################################
-# Identifying top taxa related to differences in communitiy composition and mycorrhizal root colonization.
-
+##########################################################################################################################################
+##  define functions ######################################################################################################################
+##########################################################################################################################################
 corr_plots = function(taxa){
     df.gen %>% 
     filter(genus == {{ taxa }}) %>%
@@ -44,18 +47,42 @@ get_coef = function(PS){
     return(top.tax)
 }
 
+list_top_taxa = function(taxa){
+    df.co1 = get_coef(ps %>% filter_sample_data(date == '2017' & site == "ws7"))
+    df.co2 = get_coef(ps %>% filter_sample_data(date == '2017' & site != "ws7"))
+    df.co3 = get_coef(ps %>% filter_sample_data(date == '2022' & site == "ws7"))
+    df.co4 = get_coef(ps %>% filter_sample_data(date == '2022' & site != "ws7"))
 
-df.co1 = get_coef(ps %>% filter_sample_data(date == '2017' & site == "ws7"))
-df.co2 = get_coef(ps %>% filter_sample_data(date == '2017' & site != "ws7"))
-df.co3 = get_coef(ps %>% filter_sample_data(date == '2022' & site == "ws7"))
-df.co4 = get_coef(ps %>% filter_sample_data(date == '2022' & site != "ws7"))
+    bind_rows(df.co1[[{{ taxa }}]] %>% unique() %>% data.frame(),
+                df.co2[[{{ taxa }}]] %>% unique() %>% data.frame(),
+                df.co3[[{{ taxa }}]] %>% unique() %>% data.frame(),
+                df.co4[[{{ taxa }}]] %>% unique() %>% data.frame()) %>% 
+        magrittr::set_colnames(c({{ taxa }})) %>% filter(!!sym(taxa) != "") %>%
+    arrange({{ taxa }}) %>%
+    .[[{{ taxa }}]] %>% unique
+}
+##########################################################################################################################################
+##########################################################################################################################################
+##########################################################################################################################################
 
-bind_rows(df.co1$genus %>% unique() %>% data.frame(),
-df.co2$genus %>% unique() %>% data.frame(),
-df.co3$genus %>% unique() %>% data.frame(),
-df.co4$genus %>% unique() %>% data.frame()) %>% magrittr::set_colnames(c('genera')) %>% filter(genera != "") %>%
-arrange(genera) %>%
-.$genera %>% unique
+##########################################################################################################################################
+###  generate abundance data sets for each taxonomic group ################################################################################
+##########################################################################################################################################
+
+# Genera abundance
+df.gen = ps %>% tax_glom(taxrank = "genus") %>% transform_sample_counts(., function(x) x / sum(x)) %>% speedyseq::psmelt()
+# Family abundance
+df.fam = ps %>% tax_glom(taxrank = "family") %>% transform_sample_counts(., function(x) x / sum(x)) %>% speedyseq::psmelt()
+# Class abundance
+df.cla = ps %>% tax_glom(taxrank = "class") %>% transform_sample_counts(., function(x) x / sum(x)) %>% speedyseq::psmelt()
+# Order abundance
+df.ord = ps %>% tax_glom(taxrank = "order") %>% transform_sample_counts(., function(x) x / sum(x)) %>% speedyseq::psmelt()
+# Phylum abundance
+df.phy = ps %>% tax_glom(taxrank = "phylum") %>% transform_sample_counts(., function(x) x / sum(x)) %>% speedyseq::psmelt()
+
+
+
+list_top_taxa("family")
 lapply(., corr_plots)
 
 corr_plots("Bacillus")
@@ -67,7 +94,7 @@ corr_plots("Thermogemmatispora")
 corr_plots("Roseiarcus")
 
 
-df.gen = ps %>% tax_glom(taxrank = "genus") %>% transform_sample_counts(., function(x) x / sum(x)) %>% speedyseq::psmelt()
+
 
 df.gen %>% 
     filter(genus == 'Actinoallomurus' & date == '2017') %>%
@@ -127,3 +154,6 @@ ggsave(file = 'figures/myco-colonization-correlation_2017_Methylocapsa.svg', wid
 # This assoication is thought to lead to CH4 production by the fungi (citing references: DOI:10.1111/j.1574-6941.2007.00425.x)
 #  https://doi.org/10.1038/ncomms2049
 ## Look for links between AMF and methanotrophs in literature.
+
+
+df.meta %>% colnames
